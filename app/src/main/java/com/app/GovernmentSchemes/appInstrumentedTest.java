@@ -21,6 +21,6 @@ public class appInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.app.GovernmentSchemes", appContext.getPackageName());
+        Assert.assertEquals("com.app.GovernmentSchemes", appContext.getPackageName());
     }
 }
