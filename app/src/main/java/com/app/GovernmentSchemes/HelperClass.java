@@ -1,4 +1,4 @@
-package com.example.GovernmentSchemes;
+package com.app.GovernmentSchemes;
 
 
 public class HelperClass {

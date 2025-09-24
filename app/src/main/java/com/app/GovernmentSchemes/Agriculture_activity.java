@@ -1,9 +1,10 @@
-package com.example.GovernmentSchemes;
+package com.app.GovernmentSchemes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.TextView;
+
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,7 +14,7 @@ import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-public class housing_activity extends AppCompatActivity {
+public class Agriculture_activity extends AppCompatActivity {
     TextView lblXmlData, lblJsonData;
     TextView header_title;
     int mode = 0;
@@ -22,9 +23,9 @@ public class housing_activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
-        header_title = findViewById(R.id.header_title);
+        header_title = findViewById(com.app.GovernmentSchemes.R.id.header_title);
 
-        header_title.setText("Housing Sector");
+        header_title.setText("Agriculture Sector");
         lblXmlData = (TextView) findViewById(R.id.lbl_xml_data);
         mode = getIntent().getIntExtra("mode", 0);
         parseXmlDocument();
@@ -32,7 +33,7 @@ public class housing_activity extends AppCompatActivity {
 
     public String parseXmlDocument() {
         try {
-            InputStream is = getAssets().open("housing.xml");
+            InputStream is = getAssets().open("agridata.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(is);
@@ -49,7 +50,7 @@ public class housing_activity extends AppCompatActivity {
                     String scheme = getValue("SCHEME", element2);
                     String desc = getValue("DESC", element2);
 
-                    // Print the values
+                    // Format the scheme string to appear bold
                     String formattedScheme = "<b>" + scheme + "</b>";
                     String schemeHead = "<b><u>" + "SCHEME :" + "</b><u>";
                     String descHead = "<b><u>" + "DESCRIPTION :" + "</b><u>";
@@ -59,6 +60,8 @@ public class housing_activity extends AppCompatActivity {
                     lblXmlData.append(desc+"\n\n");
                 }
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }

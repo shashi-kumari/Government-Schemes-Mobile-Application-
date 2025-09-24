@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.GovernmentSchemes'
+    namespace 'com.app.GovernmentSchemes'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.GovernmentSchemes"
+        applicationId "com.app.GovernmentSchemes"
         minSdk 19
         targetSdk 33
         versionCode 1

@@ -1,4 +1,4 @@
-package com.example.GovernmentSchemes;
+package com.app.GovernmentSchemes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-public class business_activity extends AppCompatActivity {
+public class education_activity extends AppCompatActivity {
     TextView lblXmlData, lblJsonData;
     TextView header_title;
     int mode = 0;
@@ -24,7 +24,7 @@ public class business_activity extends AppCompatActivity {
         setContentView(R.layout.activity_view);
         header_title = findViewById(R.id.header_title);
 
-        header_title.setText("Business Sector");
+        header_title.setText("Education Sector");
         lblXmlData = (TextView) findViewById(R.id.lbl_xml_data);
         mode = getIntent().getIntExtra("mode", 0);
         parseXmlDocument();
@@ -32,7 +32,7 @@ public class business_activity extends AppCompatActivity {
 
     public String parseXmlDocument() {
         try {
-            InputStream is = getAssets().open("businessdata.xml");
+            InputStream is = getAssets().open("education.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(is);

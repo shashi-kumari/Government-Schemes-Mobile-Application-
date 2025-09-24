@@ -1,4 +1,4 @@
-package com.example.GovernmentSchemes;
+package com.app.GovernmentSchemes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

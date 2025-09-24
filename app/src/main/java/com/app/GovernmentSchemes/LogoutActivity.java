@@ -1,4 +1,4 @@
-package com.example.GovernmentSchemes;
+package com.app.GovernmentSchemes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,7 +29,7 @@ public class LogoutActivity extends AppCompatActivity {
 
     private void clearUserSession() {
         // Clear any stored user session data or credentials
-        // For example, you can use SharedPreferences or other storage mechanism
+        // For app, you can use SharedPreferences or other storage mechanism
         SharedPreferences preferences = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();

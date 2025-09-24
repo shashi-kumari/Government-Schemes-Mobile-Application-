@@ -1,4 +1,4 @@
-package com.example.GovernmentSchemes;
+package com.app.GovernmentSchemes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.example.GovernmentSchemes;
+package com.app.GovernmentSchemes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view.equals(agriculture)) {
-            Intent agriculture = new Intent(MainActivity.this, com.example.GovernmentSchemes.Agriculture_activity.class);
+            Intent agriculture = new Intent(MainActivity.this, com.app.GovernmentSchemes.Agriculture_activity.class);
             startActivity(agriculture);
         }
         if (view.equals(bank)) {
