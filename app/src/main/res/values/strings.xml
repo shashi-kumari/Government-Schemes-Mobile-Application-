@@ -1,8 +1,4 @@
 <resources>
-    <string name="app_name">Government Schemes</string>
-    <string name="welcome_message">Welcome to Government Schemes</string>
-    <string name="app_description">Your gateway to accessing information about various government schemes and benefits available under District Panchayat.</string>
-    <string name="explore_schemes">Explore Schemes</string>
-    <string name="footer_text">District Panchayat - Serving Citizens</string>
-    <string name="app_logo_description">Government schemes application logo</string>
+    <string name="app_name">GovernmentScheme</string>
+    <string name="click_here_to_get_information_about_the_schemes">Click here to get information about the schemes</string>
 </resources>

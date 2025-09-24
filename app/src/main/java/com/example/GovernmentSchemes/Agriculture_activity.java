@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.widget.TextView;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,7 +23,7 @@ public class Agriculture_activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
-        header_title = findViewById(R.id.header_title);
+        header_title = findViewById(com.example.GovernmentSchemes.R.id.header_title);
 
         header_title.setText("Agriculture Sector");
         lblXmlData = (TextView) findViewById(R.id.lbl_xml_data);

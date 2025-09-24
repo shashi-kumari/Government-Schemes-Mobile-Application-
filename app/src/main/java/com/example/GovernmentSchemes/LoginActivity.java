@@ -17,8 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-        import java.util.Objects;
-
 public class LoginActivity extends AppCompatActivity {
     EditText loginUsername, loginPassword;
     Button loginButton;
