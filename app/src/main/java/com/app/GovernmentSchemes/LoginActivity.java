@@ -20,10 +20,15 @@ import com.google.firebase.database.ValueEventListener;
 public class LoginActivity extends AppCompatActivity {
     EditText loginUsername, loginPassword;
     Button loginButton;
-    TextView signupRedirectText;
+    TextView signupRedirectText, guestRedirectText;
+    private ThemeManager themeManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize theme manager and apply current theme
+        themeManager = new ThemeManager(this);
+        themeManager.applyCurrentTheme();
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -31,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         signupRedirectText = findViewById(R.id.signupRedirectText);
+        guestRedirectText = findViewById(R.id.guestRedirectText);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +53,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        guestRedirectText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("isGuest", true);
                 startActivity(intent);
             }
         });

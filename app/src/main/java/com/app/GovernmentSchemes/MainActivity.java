@@ -16,21 +16,32 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView agriculture, bank, business, education, health, house, logout,subscribeButton;
+    ImageView agriculture, bank, business, education, health, house, logout, subscribeButton, themeToggle;
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "channel_id";
     private static final CharSequence CHANNEL_NAME = "My Channel";
     private static final String CHANNEL_DESCRIPTION = "My Channel Description";
     private static final int REQUEST_CODE = 1;
+    
+    private boolean isGuestMode = false;
+    private ThemeManager themeManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Initialize theme manager and apply current theme
+        themeManager = new ThemeManager(this);
+        themeManager.applyCurrentTheme();
+        
         setContentView(R.layout.activity_main);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+
+        // Check if user is in guest mode
+        isGuestMode = getIntent().getBooleanExtra("isGuest", false);
 
         agriculture = findViewById(R.id.agro);
         bank = findViewById(R.id.bank);
@@ -39,7 +50,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         health = findViewById(R.id.health);
         house = findViewById(R.id.house);
         logout = findViewById(R.id.logoutimage);
+        themeToggle = findViewById(R.id.theme_toggle);
+        
         logout.setOnClickListener(this);
+        themeToggle.setOnClickListener(this);
         agriculture.setOnClickListener(this);
         bank.setOnClickListener(this);
         business.setOnClickListener(this);
@@ -137,8 +151,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (view.equals(logout)) {
-            Intent logout = new Intent(MainActivity.this, LogoutActivity.class);
-            startActivity(logout);
+            if (isGuestMode) {
+                // For guest mode, go back to welcome screen
+                Intent welcome = new Intent(MainActivity.this, WelcomeActivity.class);
+                welcome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(welcome);
+            } else {
+                // For logged in users, use regular logout
+                Intent logout = new Intent(MainActivity.this, LogoutActivity.class);
+                startActivity(logout);
+            }
         }
+        
+        if (view.equals(themeToggle)) {
+            toggleTheme();
+        }
+    }
+    
+    private void toggleTheme() {
+        int currentTheme = themeManager.getTheme();
+        int newTheme;
+        
+        // Cycle through themes: System -> Light -> Dark -> System
+        switch (currentTheme) {
+            case ThemeManager.THEME_SYSTEM:
+                newTheme = ThemeManager.THEME_LIGHT;
+                break;
+            case ThemeManager.THEME_LIGHT:
+                newTheme = ThemeManager.THEME_DARK;
+                break;
+            case ThemeManager.THEME_DARK:
+            default:
+                newTheme = ThemeManager.THEME_SYSTEM;
+                break;
+        }
+        
+        themeManager.setTheme(newTheme);
+        // Recreate activity to apply theme change
+        recreate();
     }
 }

@@ -72,6 +72,16 @@
                 android:layout_marginTop="10dp"
                 android:textSize="18sp"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guestRedirectText"
+                android:text="Continue as Guest"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/purple_500"/>
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
