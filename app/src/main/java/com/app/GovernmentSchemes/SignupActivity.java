@@ -20,9 +20,14 @@ public class SignupActivity extends AppCompatActivity {
     Button signupButton;
     FirebaseDatabase database;
     DatabaseReference reference;
+    private ThemeManager themeManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize theme manager and apply current theme
+        themeManager = new ThemeManager(this);
+        themeManager.applyCurrentTheme();
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
