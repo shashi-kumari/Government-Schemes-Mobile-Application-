@@ -38,7 +38,7 @@
     <activity android:name=".MainActivity" />
     <activity android:name=".LoginActivity" />
     <activity android:name=".LogoutActivity" />
-    <activity android:name=".WelcomeActivity" />
+
 
     <meta-data
         android:name="preloaded_fonts"
