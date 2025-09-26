@@ -271,5 +271,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/notification_icon" />
 
+    <ImageView
+        android:id="@+id/theme_toggle"
+        android:layout_width="55dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="52dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/subscribeButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_theme_toggle" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
