@@ -8,4 +8,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="translucent_black">#66000000</color>
+    
+    <!-- Government Scheme App Colors -->
+    <color name="government_green">#29612B</color>
+    <color name="government_green_dark">#1e4a20</color>
+    <color name="surface_light">#FFFFFFFF</color>
+    <color name="surface_dark">#121212</color>
+    <color name="background_light">#FFFFFFFF</color>
+    <color name="background_dark">#121212</color>
+    <color name="on_surface_light">#000000</color>
+    <color name="on_surface_dark">#FFFFFF</color>
+    <color name="card_background_light">#FFFFFF</color>
+    <color name="card_background_dark">#1E1E1E</color>
 </resources>
