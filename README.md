@@ -167,6 +167,42 @@ The application follows a simple activity-based architecture:
 - **Data Layer**: Firebase for user data, XML assets for scheme information
 - **Notification Service**: Firebase Cloud Messaging integration
 
+## CI/CD & Code Quality
+
+This project includes automated GitHub Actions workflows for continuous integration and code quality assurance:
+
+### 🔄 Automated Workflows
+
+- **Code Quality Checks**: Runs on every push and pull request
+  - Build verification using Gradle
+  - Unit test execution with JUnit
+  - Android Lint analysis for code quality issues
+  - Security vulnerability scanning
+  - Automated artifact generation (APK, reports)
+
+- **Pull Request Quality Check**: Enhanced checks for PRs
+  - Code formatting validation
+  - Common issue detection (hardcoded strings, TODO comments)
+  - Automated quality summary comments on PRs
+
+### 📊 Quality Metrics
+
+Each build generates:
+- **Build Artifacts**: Debug APK files
+- **Test Reports**: Unit test results and coverage
+- **Lint Reports**: Code quality analysis
+- **Security Reports**: Vulnerability assessments
+
+### ⚙️ Workflow Configuration
+
+Workflows are configured to use:
+- **JDK 11** for compatibility
+- **Android SDK** with automated setup
+- **Gradle caching** for faster builds
+- **Artifact retention** for debugging and deployment
+
+See `.github/workflows/` for detailed workflow configurations.
+
 ## License
 
 This project is released under CC0 1.0 Universal license - see the LICENSE file for details.
