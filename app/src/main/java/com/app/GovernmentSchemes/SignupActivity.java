@@ -12,6 +12,11 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import androidx.annotation.NonNull;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -41,21 +46,15 @@ public class SignupActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (validateAllFields()) {
+                    String name = signupName.getText().toString().trim();
+                    String email = signupEmail.getText().toString().trim();
+                    String username = signupUsername.getText().toString().trim();
+                    String password = signupPassword.getText().toString();
 
-                database = FirebaseDatabase.getInstance();
-                reference = database.getReference("users");
-
-                String name = signupName.getText().toString();
-                String email = signupEmail.getText().toString();
-                String username = signupUsername.getText().toString();
-                String password = signupPassword.getText().toString();
-
-                HelperClass helperClass = new HelperClass(name, email, username, password);
-                reference.child(username).setValue(helperClass);
-
-                Toast.makeText(SignupActivity.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                startActivity(intent);
+                    // Check if username already exists
+                    checkUsernameAvailability(name, email, username, password);
+                }
             }
         });
 
@@ -66,5 +65,105 @@ public class SignupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    /**
+     * Validate all input fields
+     */
+    private boolean validateAllFields() {
+        boolean isValid = true;
+
+        // Validate name
+        String name = signupName.getText().toString().trim();
+        String nameError = ValidationUtils.getNameErrorMessage(name);
+        if (nameError != null) {
+            signupName.setError(nameError);
+            isValid = false;
+        } else {
+            signupName.setError(null);
+        }
+
+        // Validate email
+        String email = signupEmail.getText().toString().trim();
+        String emailError = ValidationUtils.getEmailErrorMessage(email);
+        if (emailError != null) {
+            signupEmail.setError(emailError);
+            isValid = false;
+        } else {
+            signupEmail.setError(null);
+        }
+
+        // Validate username
+        String username = signupUsername.getText().toString().trim();
+        String usernameError = ValidationUtils.getUsernameErrorMessage(username);
+        if (usernameError != null) {
+            signupUsername.setError(usernameError);
+            isValid = false;
+        } else {
+            signupUsername.setError(null);
+        }
+
+        // Validate password
+        String password = signupPassword.getText().toString();
+        String passwordError = ValidationUtils.getPasswordErrorMessage(password);
+        if (passwordError != null) {
+            signupPassword.setError(passwordError);
+            isValid = false;
+        } else {
+            signupPassword.setError(null);
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Check if username is already taken
+     */
+    private void checkUsernameAvailability(String name, String email, String username, String password) {
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("users");
+
+        Query checkUserDatabase = reference.orderByChild("username").equalTo(username);
+        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    signupUsername.setError("Username already exists. Please choose a different one.");
+                    signupUsername.requestFocus();
+                } else {
+                    // Username is available, proceed with registration
+                    registerUser(name, email, username, password);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(SignupActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Register user with encrypted password
+     */
+    private void registerUser(String name, String email, String username, String password) {
+        try {
+            // Encrypt password before storing
+            String encryptedPassword = PasswordUtils.encryptPassword(password);
+            
+            HelperClass helperClass = new HelperClass(name, email, username, encryptedPassword);
+            reference.child(username).setValue(helperClass)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(SignupActivity.this, "You have signed up successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(SignupActivity.this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+        } catch (Exception e) {
+            Toast.makeText(SignupActivity.this, "Error during registration: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }

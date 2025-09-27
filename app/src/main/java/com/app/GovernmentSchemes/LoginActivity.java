@@ -69,9 +69,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public Boolean validateUsername() {
-        String val = loginUsername.getText().toString();
-        if (val.isEmpty()) {
-            loginUsername.setError("Username cannot be empty");
+        String val = loginUsername.getText().toString().trim();
+        String usernameError = ValidationUtils.getUsernameErrorMessage(val);
+        if (usernameError != null) {
+            loginUsername.setError(usernameError);
             return false;
         } else {
             loginUsername.setError(null);
@@ -81,8 +82,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public Boolean validatePassword(){
         String val = loginPassword.getText().toString();
-        if (val.isEmpty()) {
-            loginPassword.setError("Password cannot be empty");
+        String passwordError = ValidationUtils.getPasswordErrorMessage(val);
+        if (passwordError != null) {
+            loginPassword.setError(passwordError);
             return false;
         } else {
             loginPassword.setError(null);
@@ -107,7 +109,8 @@ public class LoginActivity extends AppCompatActivity {
                     loginUsername.setError(null);
                     String passwordFromDB = snapshot.child(userUsername).child("password").getValue(String.class);
 
-                    if (passwordFromDB.equals(userPassword)) {
+                    // Use encrypted password verification
+                    if (passwordFromDB != null && PasswordUtils.verifyPassword(userPassword, passwordFromDB)) {
                         loginUsername.setError(null);
 
                         String nameFromDB = snapshot.child(userUsername).child("name").getValue(String.class);
@@ -119,11 +122,12 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra("name", nameFromDB);
                         intent.putExtra("email", emailFromDB);
                         intent.putExtra("username", usernameFromDB);
-                        intent.putExtra("password", passwordFromDB);
+                        intent.putExtra("password", ""); // Don't pass password in intent
 
                         startActivity(intent);
+                        finish();
                     } else {
-                        loginPassword.setError("Invalid Credentials");
+                        loginPassword.setError("Invalid credentials");
                         loginPassword.requestFocus();
                     }
                 } else {
