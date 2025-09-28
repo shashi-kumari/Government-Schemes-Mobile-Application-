@@ -1,5 +1,5 @@
 package com.app.GovernmentSchemes;
-
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Initialize theme manager and apply current theme
+        Log.d("LoginActivity", "Initializing ThemeManager and applying theme");
         themeManager = new ThemeManager(this);
         themeManager.applyCurrentTheme();
         
@@ -41,6 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("LoginActivity", "Validation failed for username or password");
+                Log.d("LoginActivity", "Validation passed, checking user");
+
                 if (!validateUsername() || !validatePassword()) {
 
                 } else {
@@ -52,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         signupRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("LoginActivity", "Redirecting to SignupActivity");
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);
             }
@@ -60,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         guestRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("LoginActivity", "Redirecting to MainActivity as guest");
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("isGuest", true);
                 startActivity(intent);
@@ -95,20 +100,21 @@ public class LoginActivity extends AppCompatActivity {
 
     public void checkUser(){
         String userUsername = loginUsername.getText().toString().trim();
+        Log.d("LoginActivity", "Checking user: " + userUsername);
         String userPassword = loginPassword.getText().toString().trim();
-
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
         Query checkUserDatabase = reference.orderByChild("username").equalTo(userUsername);
 
         checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if (snapshot.exists()){
-
+Log.d("LoginActivity", "onDataChange called for user: " + userUsername);
+                if (snapshot.exists()) {
+                    Log.d("LoginActivity", "User exists in database");
                     loginUsername.setError(null);
                     String passwordFromDB = snapshot.child(userUsername).child("password").getValue(String.class);
 
+                    Log.d("LoginActivity", "Verifying password for user: " + userUsername);
                     // Use encrypted password verification
                     if (passwordFromDB != null && PasswordUtils.verifyPassword(userPassword, passwordFromDB)) {
                         loginUsername.setError(null);
@@ -124,13 +130,16 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra("username", usernameFromDB);
                         intent.putExtra("password", ""); // Don't pass password in intent
 
+                        Log.d("LoginActivity", "Login successful, starting MainActivity");
                         startActivity(intent);
                         finish();
                     } else {
+                        Log.d("LoginActivity", "Invalid credentials for user: " + userUsername);
                         loginPassword.setError("Invalid credentials");
                         loginPassword.requestFocus();
                     }
-                } else {
+                }else{
+                    Log.d("LoginActivity", "User does not exist: " + userUsername);
                     loginUsername.setError("User does not exist");
                     loginUsername.requestFocus();
                 }
@@ -138,8 +147,9 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.e("LoginActivity", "Database error: " + error.getMessage());
             }
         });
+
     }
 }

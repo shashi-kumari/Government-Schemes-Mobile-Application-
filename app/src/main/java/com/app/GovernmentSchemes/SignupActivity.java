@@ -1,5 +1,5 @@
 package com.app.GovernmentSchemes;
-
+import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -26,6 +26,7 @@ public class SignupActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
     private ThemeManager themeManager;
+    private static final String TAG = "SignupActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class SignupActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "Signup button clicked. Validating fields.");
                 if (validateAllFields()) {
                     String name = signupName.getText().toString().trim();
                     String email = signupEmail.getText().toString().trim();
@@ -53,7 +55,14 @@ public class SignupActivity extends AppCompatActivity {
                     String password = signupPassword.getText().toString();
 
                     // Check if username already exists
+                    Log.d(TAG, "Checking username availability for: " + username);
                     checkUsernameAvailability(name, email, username, password);
+                    HelperClass helperClass = new HelperClass(name, email, username, password);
+                    reference.child(username).setValue(helperClass);
+
+                    Toast.makeText(SignupActivity.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -128,9 +137,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    Log.d(TAG, "Username already exists: " + username);
                     signupUsername.setError("Username already exists. Please choose a different one.");
                     signupUsername.requestFocus();
                 } else {
+                    Log.d(TAG, "Username available: " + username);
                     // Username is available, proceed with registration
                     registerUser(name, email, username, password);
                 }
@@ -138,6 +149,7 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Database error: " + error.getMessage());
                 Toast.makeText(SignupActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -149,20 +161,24 @@ public class SignupActivity extends AppCompatActivity {
     private void registerUser(String name, String email, String username, String password) {
         try {
             // Encrypt password before storing
+            Log.d(TAG, "Encrypting password for user: " + username);
             String encryptedPassword = PasswordUtils.encryptPassword(password);
             
             HelperClass helperClass = new HelperClass(name, email, username, encryptedPassword);
             reference.child(username).setValue(helperClass)
                 .addOnSuccessListener(aVoid -> {
+                    Log.i(TAG, "User signed up successfully: " + username);
                     Toast.makeText(SignupActivity.this, "You have signed up successfully!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> {
+                    Log.e(TAG, "Registration failed: " + e.getMessage());
                     Toast.makeText(SignupActivity.this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
         } catch (Exception e) {
+            Log.e(TAG, "Error during registration: " + e.getMessage());
             Toast.makeText(SignupActivity.this, "Error during registration: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
