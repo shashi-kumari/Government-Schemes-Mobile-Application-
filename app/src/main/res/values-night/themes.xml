@@ -2,12 +2,12 @@
     <!-- Dark theme for the application. -->
     <style name="Theme.GovernmentSchemes" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/government_green</item>
-        <item name="colorPrimaryVariant">@color/government_green_dark</item>
+        <item name="colorPrimary">@color/government_green_light</item>
+        <item name="colorPrimaryVariant">@color/government_green</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>  
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/accent_blue_light</item>  
+        <item name="colorSecondaryVariant">@color/accent_blue</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Surface colors -->
         <item name="colorSurface">@color/surface_dark</item>
@@ -18,8 +18,10 @@
         <!-- Custom attributes -->
         <item name="cardBackgroundColor">@color/card_background_dark</item>
         <!-- Text and hint colors -->
-        <item name="android:textColorHint">@color/on_surface_dark</item>
-        <item name="android:textColorSecondary">@color/on_surface_dark</item>
+        <item name="android:textColorHint">@color/on_surface_variant_dark</item>
+        <item name="android:textColorSecondary">@color/on_surface_variant_dark</item>
+        <!-- Better button styling -->
+        <item name="materialButtonStyle">@style/Widget.GovernmentSchemes.Button</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>
