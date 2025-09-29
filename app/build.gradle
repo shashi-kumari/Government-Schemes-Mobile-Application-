@@ -1,16 +1,16 @@
 plugins {
     id 'com.android.application'
-    // id 'com.google.gms.google-services'
+    id 'com.google.gms.google-services'
 }
 
 android {
     namespace 'com.app.GovernmentSchemes'
-    compileSdk 36
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.app.GovernmentSchemes"
         minSdk 23
-        targetSdk 36
+        targetSdk 34
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
