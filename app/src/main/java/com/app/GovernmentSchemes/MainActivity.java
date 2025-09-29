@@ -1,9 +1,14 @@
 package com.app.GovernmentSchemes;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.app.NotificationChannel;
@@ -12,11 +17,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView agriculture, bank, business, education, health, house, logout, subscribeButton, themeToggle;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+    ImageView agriculture, bank, business, education, health, house, subscribeButton;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle drawerToggle;
+    
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "channel_id";
     private static final CharSequence CHANNEL_NAME = "My Channel";
@@ -25,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     
     private boolean isGuestMode = false;
     private ThemeManager themeManager;
+    private String userName = "";
+    private String userEmail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,31 +54,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         
         setContentView(R.layout.activity_main);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        // Setup toolbar
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // Check if user is in guest mode
+        // Setup navigation drawer
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+        
+        drawerToggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.nav_open, R.string.nav_close);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Check if user is in guest mode and get user data
         isGuestMode = getIntent().getBooleanExtra("isGuest", false);
+        userName = getIntent().getStringExtra("name");
+        userEmail = getIntent().getStringExtra("email");
+        
+        // Setup navigation header with user info
+        setupNavigationHeader();
 
+        // Initialize views
         agriculture = findViewById(R.id.agro);
         bank = findViewById(R.id.bank);
         business = findViewById(R.id.business);
         education = findViewById(R.id.education);
         health = findViewById(R.id.health);
         house = findViewById(R.id.house);
-        logout = findViewById(R.id.logoutimage);
-        themeToggle = findViewById(R.id.theme_toggle);
+        subscribeButton = findViewById(R.id.subscribeButton);
         
-        logout.setOnClickListener(this);
-        themeToggle.setOnClickListener(this);
+        // Set click listeners
         agriculture.setOnClickListener(this);
         bank.setOnClickListener(this);
         business.setOnClickListener(this);
         education.setOnClickListener(this);
         health.setOnClickListener(this);
         house.setOnClickListener(this);
-        subscribeButton = findViewById(R.id.subscribeButton);
 
         // Create notification channel
         createNotificationChannel();
@@ -71,6 +104,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 requestNotificationPermission();
             }
         });
+    }
+    
+    private void setupNavigationHeader() {
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUserName = headerView.findViewById(R.id.nav_user_name);
+        TextView navUserEmail = headerView.findViewById(R.id.nav_user_email);
+        
+        if (isGuestMode) {
+            navUserName.setText(getString(R.string.guest_user));
+            navUserEmail.setText("");
+        } else {
+            navUserName.setText(userName != null && !userName.isEmpty() ? userName : getString(R.string.user_name_placeholder));
+            navUserEmail.setText(userEmail != null ? userEmail : "");
+        }
     }
 
     private void createNotificationChannel() {
@@ -124,6 +171,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        
+        if (id == R.id.nav_theme_toggle) {
+            toggleTheme();
+        } else if (id == R.id.nav_logout) {
+            handleLogout();
+        }
+        
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         if (view.equals(agriculture)) {
             Intent agriculture = new Intent(MainActivity.this, com.app.GovernmentSchemes.Agriculture_activity.class);
@@ -149,22 +219,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent housing = new Intent(MainActivity.this, housing_activity.class);
             startActivity(housing);
         }
-
-        if (view.equals(logout)) {
-            if (isGuestMode) {
-                // For guest mode, go back to welcome screen
-                Intent welcome = new Intent(MainActivity.this, WelcomeActivity.class);
-                welcome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(welcome);
-            } else {
-                // For logged in users, use regular logout
-                Intent logout = new Intent(MainActivity.this, LogoutActivity.class);
-                startActivity(logout);
-            }
-        }
-        
-        if (view.equals(themeToggle)) {
-            toggleTheme();
+    }
+    
+    private void handleLogout() {
+        if (isGuestMode) {
+            // For guest mode, go back to welcome screen
+            Intent welcome = new Intent(MainActivity.this, WelcomeActivity.class);
+            welcome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(welcome);
+        } else {
+            // For logged in users, use regular logout
+            Intent logout = new Intent(MainActivity.this, LogoutActivity.class);
+            startActivity(logout);
         }
     }
     
