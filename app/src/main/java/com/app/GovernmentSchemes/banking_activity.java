@@ -1,8 +1,8 @@
 package com.app.GovernmentSchemes;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
 import android.widget.TextView;
 
 import org.w3c.dom.Document;
@@ -13,8 +13,9 @@ import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-public class banking_activity extends AppCompatActivity {
-    TextView lblXmlData, lblJsonData;
+
+public class banking_activity extends BaseActivity {
+    TextView lblXmlData;
     TextView header_title;
     int mode = 0;
 
@@ -22,12 +23,21 @@ public class banking_activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
+        
+        // Setup common navigation elements
+        setupCommonViews();
+        
         header_title = findViewById(R.id.header_title);
-
         header_title.setText("Banking Sector");
-        lblXmlData = (TextView) findViewById(R.id.lbl_xml_data);
+        lblXmlData = findViewById(R.id.lbl_xml_data);
         mode = getIntent().getIntExtra("mode", 0);
         parseXmlDocument();
+    }
+
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        // Handle any additional clicks specific to this activity
     }
 
     public String parseXmlDocument() {
