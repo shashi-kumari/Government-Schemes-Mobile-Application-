@@ -70,7 +70,7 @@ app/
 ## Technical Specifications
 
 - **Target SDK**: Android 13 (API 33)
-- **Minimum SDK**: Android 5.0 (API 21)
+- **Minimum SDK**: Android 5.0 (API 23)
 - **Language**: Java
 - **Build Tool**: Gradle 8.13
 - **UI Framework**: Material Components for Android
@@ -110,7 +110,7 @@ app/
 
 - Android Studio Arctic Fox or later
 - JDK 8 or higher
-- Android SDK with API 21+ support
+- Android SDK with API 23+ support
 - Firebase project setup (for authentication and database)
 
 ### Firebase Setup
