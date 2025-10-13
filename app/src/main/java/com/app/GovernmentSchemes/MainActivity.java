@@ -17,7 +17,6 @@ import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ImageView agriculture, bank, business, education, health, house, logout, subscribeButton, themeToggle;
-    android.widget.Button govtSchemesButton;
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "channel_id";
     private static final CharSequence CHANNEL_NAME = "My Channel";
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         house = findViewById(R.id.house);
         logout = findViewById(R.id.logoutimage);
         themeToggle = findViewById(R.id.theme_toggle);
-        govtSchemesButton = findViewById(R.id.govt_schemes_button);
         
         logout.setOnClickListener(this);
         themeToggle.setOnClickListener(this);
@@ -62,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         education.setOnClickListener(this);
         health.setOnClickListener(this);
         house.setOnClickListener(this);
-        govtSchemesButton.setOnClickListener(this);
         subscribeButton = findViewById(R.id.subscribeButton);
 
         // Create notification channel
@@ -168,11 +165,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         
         if (view.equals(themeToggle)) {
             toggleTheme();
-        }
-
-        if (view.equals(govtSchemesButton)) {
-            Intent govtSchemes = new Intent(MainActivity.this, GovernmentSchemesActivity.class);
-            startActivity(govtSchemes);
         }
     }
     
