@@ -35,7 +35,7 @@ public enum StateScheme {
     WEST_BENGAL("West Bengal", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/WEST%20BENGAL"),
     ANDAMAN_AND_NICOBAR_ISLANDS("Andaman and Nicobar Islands", "https://ddd.gov.in/agriculture-department/"),
     CHANDIGARH("Chandigarh", "https://chandigarhdistrict.nic.in/agriculture/"),
-    DADRA_AND_NAGAR_HAVELI_AND_DAMAN_AND_DIU("Dadra and Nagar Haveli and Daman and Diu", ""),
+    DADRA_AND_NAGAR_HAVELI_AND_DAMAN_AND_DIU("Dadra and Nagar Haveli and Daman and Diu", "https://ddd.gov.in/agriculture-department/"),
     DELHI("Delhi", "https://development.delhi.gov.in/development/agriculture-unit"),
     JAMMU_AND_KASHMIR("Jammu and Kashmir", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/JAMMU%20AND%20KASHMIR"),
     LADAKH("Ladakh", "https://ladakh.gov.in/agriculture/"),
