@@ -38,6 +38,7 @@
     <activity android:name=".MainActivity" />
     <activity android:name=".LoginActivity" />
     <activity android:name=".LogoutActivity" />
+    <activity android:name=".GovernmentSchemesActivity" />
 
 
     <meta-data
