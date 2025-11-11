@@ -44,6 +44,7 @@ public class banking_activity extends BaseActivity {
         
         if (view.equals(govtSchemesButton)) {
             Intent govtSchemes = new Intent(banking_activity.this, GovernmentSchemesActivity.class);
+            govtSchemes.putExtra(GovernmentSchemesActivity.EXTRA_SECTOR, SchemeSector.BANKING.name());
             startActivity(govtSchemes);
         }
     }

@@ -44,6 +44,7 @@ public class housing_activity extends BaseActivity {
         
         if (view.equals(govtSchemesButton)) {
             Intent govtSchemes = new Intent(housing_activity.this, GovernmentSchemesActivity.class);
+            govtSchemes.putExtra(GovernmentSchemesActivity.EXTRA_SECTOR, SchemeSector.HOUSING.name());
             startActivity(govtSchemes);
         }
     }

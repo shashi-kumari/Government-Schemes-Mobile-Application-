@@ -44,6 +44,7 @@ public class Agriculture_activity extends BaseActivity {
         
         if (view.equals(govtSchemesButton)) {
             Intent govtSchemes = new Intent(Agriculture_activity.this, GovernmentSchemesActivity.class);
+            govtSchemes.putExtra(GovernmentSchemesActivity.EXTRA_SECTOR, SchemeSector.AGRICULTURE.name());
             startActivity(govtSchemes);
         }
     }
