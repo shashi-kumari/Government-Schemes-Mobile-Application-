@@ -12,6 +12,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected ImageView themeToggle;
     protected ImageView logout;
     protected ImageView menuToggle;
+    protected ImageView notificationIcon;
     protected boolean isGuestMode = false;
 
     @Override
@@ -31,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         themeToggle = findViewById(R.id.theme_toggle);
         logout = findViewById(R.id.logout_icon);
         menuToggle = findViewById(R.id.menu_toggle);
+        notificationIcon = findViewById(R.id.notification_icon);
         
         if (themeToggle != null) {
             themeToggle.setOnClickListener(this);
@@ -43,6 +45,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         if (menuToggle != null) {
             menuToggle.setOnClickListener(this);
         }
+        
+        if (notificationIcon != null) {
+            notificationIcon.setOnClickListener(this);
+        }
     }
 
     @Override
@@ -53,6 +59,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             handleLogout();
         } else if (view.equals(menuToggle)) {
             handleMenuToggle();
+        } else if (view.equals(notificationIcon)) {
+            handleNotificationClick();
         }
     }
     
@@ -97,5 +105,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         Intent main = new Intent(this, MainActivity.class);
         main.putExtra("isGuest", isGuestMode);
         startActivity(main);
+    }
+    
+    protected void handleNotificationClick() {
+        // Go to notification list activity
+        Intent notificationList = new Intent(this, NotificationListActivity.class);
+        notificationList.putExtra("isGuest", isGuestMode);
+        startActivity(notificationList);
     }
 }
