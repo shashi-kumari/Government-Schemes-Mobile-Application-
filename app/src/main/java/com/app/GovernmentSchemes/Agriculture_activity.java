@@ -1,8 +1,12 @@
 package com.app.GovernmentSchemes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -17,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class Agriculture_activity extends AppCompatActivity {
     TextView lblXmlData, lblJsonData;
     TextView header_title;
+    Button btnStateWiseSchemes;
     int mode = 0;
 
     @Override
@@ -27,8 +32,23 @@ public class Agriculture_activity extends AppCompatActivity {
 
         header_title.setText("Agriculture Sector");
         lblXmlData = (TextView) findViewById(R.id.lbl_xml_data);
+        btnStateWiseSchemes = (Button) findViewById(R.id.btn_state_wise_schemes);
+        
+        btnStateWiseSchemes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openStateWiseSchemes();
+            }
+        });
+        
         mode = getIntent().getIntExtra("mode", 0);
         parseXmlDocument();
+    }
+
+    private void openStateWiseSchemes() {
+        String url = getString(R.string.state_schemes_url);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
     }
 
     public String parseXmlDocument() {

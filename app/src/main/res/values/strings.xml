@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">GovernmentSchemes</string>
     <string name="click_here_to_get_information_about_the_schemes">Click here to get information about the schemes</string>
+    <string name="view_state_wise_schemes">View State-wise Government Schemes</string>
+    <string name="state_schemes_url">https://www.myscheme.gov.in/find-scheme</string>
 </resources>
