@@ -1,5 +1,6 @@
 package com.app.GovernmentSchemes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -17,6 +18,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class banking_activity extends BaseActivity {
     TextView lblXmlData;
     TextView header_title;
+    android.widget.Button govtSchemesButton;
     int mode = 0;
 
     @Override
@@ -30,6 +32,8 @@ public class banking_activity extends BaseActivity {
         header_title = findViewById(R.id.header_title);
         header_title.setText("Banking Sector");
         lblXmlData = findViewById(R.id.lbl_xml_data);
+        govtSchemesButton = findViewById(R.id.govt_schemes_button);
+        govtSchemesButton.setOnClickListener(this);
         mode = getIntent().getIntExtra("mode", 0);
         parseXmlDocument();
     }
@@ -37,7 +41,11 @@ public class banking_activity extends BaseActivity {
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        // Handle any additional clicks specific to this activity
+        
+        if (view.equals(govtSchemesButton)) {
+            Intent govtSchemes = new Intent(banking_activity.this, GovernmentSchemesActivity.class);
+            startActivity(govtSchemes);
+        }
     }
 
     public String parseXmlDocument() {
