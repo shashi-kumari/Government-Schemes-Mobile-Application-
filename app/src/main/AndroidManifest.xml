@@ -40,6 +40,7 @@
     <activity android:name=".LoginActivity" />
     <activity android:name=".LogoutActivity" />
     <activity android:name=".GovernmentSchemesActivity" />
+    <activity android:name=".NotificationListActivity" />
 
 
     <meta-data

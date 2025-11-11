@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
-    tools:context=".Agriculture_activity">
+    tools:context=".NotificationListActivity">
 
     <!-- Navigation Bar -->
     <LinearLayout
@@ -35,18 +35,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text=""
+            android:text="Notifications"
             android:textColor="?attr/colorOnSurface"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/notification_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_notification_theme" />
 
         <ImageView
             android:id="@+id/theme_toggle"
@@ -67,42 +59,19 @@
 
     </LinearLayout>
 
-    <ScrollView
+    <ListView
+        android:id="@+id/notification_list_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:divider="?attr/colorOnSurface"
+        android:dividerHeight="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/navigation_bar">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/govt_schemes_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="View State-wise Government Schemes"
-                android:textAllCaps="false" />
-
-            <TextView
-                android:id="@+id/lbl_xml_data"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="24dp"
-                android:scrollbars="vertical"
-                android:text=""
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
