@@ -1,6 +1,5 @@
 package com.app.GovernmentSchemes;
 
-import android.net.Uri;
 import androidx.annotation.Nullable;
 
 public enum StateScheme {
