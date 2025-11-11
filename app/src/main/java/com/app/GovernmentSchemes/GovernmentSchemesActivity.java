@@ -11,8 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class GovernmentSchemesActivity extends BaseActivity {
+    public static final String EXTRA_SECTOR = "sector";
+    
     ListView stateListView;
     TextView header_title;
+    SchemeSector sector;
 
     // List of all Indian states and Union Territories
     String[] indianStates = {
@@ -61,9 +64,21 @@ public class GovernmentSchemesActivity extends BaseActivity {
 
         // Setup common navigation elements
         setupCommonViews();
+        
+        // Get the sector from intent, default to AGRICULTURE if not provided
+        String sectorName = getIntent().getStringExtra(EXTRA_SECTOR);
+        if (sectorName != null) {
+            try {
+                sector = SchemeSector.valueOf(sectorName);
+            } catch (IllegalArgumentException e) {
+                sector = SchemeSector.AGRICULTURE;
+            }
+        } else {
+            sector = SchemeSector.AGRICULTURE;
+        }
 
         header_title = findViewById(R.id.header_title);
-        header_title.setText("Government Schemes");
+        header_title.setText(sector.getDisplayName() + " - State Schemes");
 
         stateListView = findViewById(R.id.state_list_view);
 
@@ -87,12 +102,12 @@ public class GovernmentSchemesActivity extends BaseActivity {
     }
 
     private void handleStateClick(String stateName) {
-        StateScheme scheme = StateScheme.fromStateName(stateName);
-        if (scheme != null && scheme.getUrl() != null && !scheme.getUrl().isEmpty()) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(scheme.getUrl()));
+        String url = StateSchemeProvider.getStateUrl(sector, stateName);
+        if (url != null && !url.isEmpty()) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);
         } else {
-            Toast.makeText(this, "No scheme URL available for " + stateName, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No " + sector.getDisplayName().toLowerCase() + " scheme URL available for " + stateName, Toast.LENGTH_SHORT).show();
         }
     }
 
