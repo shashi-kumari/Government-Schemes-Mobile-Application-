@@ -51,6 +51,7 @@ public class SignupActivity extends AppCompatActivity {
         loginRedirectText = findViewById(R.id.loginRedirectText);
         signupButton = findViewById(R.id.signup_button);
 
+        // Inside onClick of signupButton
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,32 +62,8 @@ public class SignupActivity extends AppCompatActivity {
                     String username = signupUsername.getText().toString().trim();
                     String password = signupPassword.getText().toString();
 
-                    // Check if username already exists
-                    Log.d(TAG, "Checking username availability for: " + username);
-//                    checkUsernameAvailability(name, email, username, password);
-//                    HelperClass helperClass = new HelperClass(name, email, username, password);
-//                    reference.child(username).setValue(helperClass);
-//
-//                    Toast.makeText(SignupActivity.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-//                    startActivity(intent);
-                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                Toast.makeText(SignupActivity.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(SignupActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    // 1\) Check username first
+                    checkUsernameAvailability(name, email, username, password);
                 }
             }
         });
@@ -99,6 +76,7 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+
 
     /**
      * Validate all input fields
@@ -179,29 +157,50 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Register user with encrypted password
-     */
-    private void registerUser(String name, String email, String username, String password) {
-        try {
-            // Encrypt password before storing
-            Log.d(TAG, "Encrypting password for user: " + username);
-            String encryptedPassword = PasswordUtils.encryptPassword(password);
 
-            HelperClass helperClass = new HelperClass(name, email, username, encryptedPassword);
-            reference.child(username).setValue(helperClass).addOnSuccessListener(aVoid -> {
-                Log.i(TAG, "User signed up successfully: " + username);
-                Toast.makeText(SignupActivity.this, "You have signed up successfully!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }).addOnFailureListener(e -> {
-                Log.e(TAG, "Registration failed: " + e.getMessage());
-                Toast.makeText(SignupActivity.this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "Error during registration: " + e.getMessage());
-            Toast.makeText(SignupActivity.this, "Error during registration: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+    // Update checkUsernameAvailability to only call Firebase Auth on success
+    private void registerUser(String name, String email, String username, String password) {
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("users");
+
+        // 2\) First create user in Firebase Auth
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        try {
+                            // 3\) Encrypt password before saving to Realtime DB
+                            String encryptedPassword = PasswordUtils.encryptPassword(password);
+
+                            HelperClass helperClass =
+                                    new HelperClass(name, email, username, encryptedPassword);
+
+                            // 4\) Save user data in Realtime DB
+                            reference.child(username)
+                                    .setValue(helperClass)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(SignupActivity.this,
+                                                "You have signed up successfully!",
+                                                Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(SignupActivity.this,
+                                                "Registration failed: " + e.getMessage(),
+                                                Toast.LENGTH_SHORT).show();
+                                    });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(SignupActivity.this,
+                                    "Error during registration: " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(SignupActivity.this,
+                                "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
