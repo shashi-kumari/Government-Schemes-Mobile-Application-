@@ -7,7 +7,8 @@ package com.app.GovernmentSchemes;
  *   "scheme": "Scheme Name",
  *   "description": "Description of the scheme",
  *   "notificationDate": "Date when the scheme was notified",
- *   "url": "URL to the scheme details or 'na' if not available"
+ *   "url": "URL to the scheme details or 'na' if not available",
+ *   "createdAt": timestamp (milliseconds since epoch) when scheme was added
  * }
  */
 public class SchemeData {
@@ -15,6 +16,7 @@ public class SchemeData {
     private String description;
     private String notificationDate;
     private String url;
+    private long createdAt;
 
     // Default constructor required for Firebase
     public SchemeData() {
@@ -25,6 +27,15 @@ public class SchemeData {
         this.description = description;
         this.notificationDate = notificationDate;
         this.url = url;
+        this.createdAt = System.currentTimeMillis();
+    }
+
+    public SchemeData(String scheme, String description, String notificationDate, String url, long createdAt) {
+        this.scheme = scheme;
+        this.description = description;
+        this.notificationDate = notificationDate;
+        this.url = url;
+        this.createdAt = createdAt;
     }
 
     public String getScheme() {
@@ -59,6 +70,14 @@ public class SchemeData {
         this.url = url;
     }
 
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
     /**
      * Checks if this scheme has a valid URL (not "na" or empty) with a safe scheme (http/https).
      * @return true if the scheme has a valid URL that can be safely opened in a browser
@@ -70,5 +89,14 @@ public class SchemeData {
         // Only allow http and https schemes for security
         String lowerUrl = url.toLowerCase();
         return lowerUrl.startsWith("http://") || lowerUrl.startsWith("https://");
+    }
+
+    /**
+     * Checks if this scheme was created within the last 24 hours.
+     * @return true if created within last 24 hours
+     */
+    public boolean isRecentlyAdded() {
+        long twentyFourHoursAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
+        return createdAt > twentyFourHoursAgo;
     }
 }

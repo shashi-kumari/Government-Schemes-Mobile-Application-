@@ -16,21 +16,45 @@ public class SchemeDataTest {
         assertNull(schemeData.getDescription());
         assertNull(schemeData.getNotificationDate());
         assertNull(schemeData.getUrl());
+        assertEquals(0, schemeData.getCreatedAt());
     }
 
     @Test
     public void testParameterizedConstructor() {
+        long beforeCreation = System.currentTimeMillis();
         SchemeData schemeData = new SchemeData(
                 "Test Scheme",
                 "Test Description",
                 "2024-01-01",
                 "https://example.com"
         );
+        long afterCreation = System.currentTimeMillis();
         
         assertEquals("Test Scheme", schemeData.getScheme());
         assertEquals("Test Description", schemeData.getDescription());
         assertEquals("2024-01-01", schemeData.getNotificationDate());
         assertEquals("https://example.com", schemeData.getUrl());
+        // Verify createdAt is set automatically within the expected time range
+        assertTrue(schemeData.getCreatedAt() >= beforeCreation);
+        assertTrue(schemeData.getCreatedAt() <= afterCreation);
+    }
+
+    @Test
+    public void testParameterizedConstructorWithCreatedAt() {
+        long customCreatedAt = 1609459200000L; // Jan 1, 2021
+        SchemeData schemeData = new SchemeData(
+                "Test Scheme",
+                "Test Description",
+                "2024-01-01",
+                "https://example.com",
+                customCreatedAt
+        );
+        
+        assertEquals("Test Scheme", schemeData.getScheme());
+        assertEquals("Test Description", schemeData.getDescription());
+        assertEquals("2024-01-01", schemeData.getNotificationDate());
+        assertEquals("https://example.com", schemeData.getUrl());
+        assertEquals(customCreatedAt, schemeData.getCreatedAt());
     }
 
     @Test
@@ -41,11 +65,65 @@ public class SchemeDataTest {
         schemeData.setDescription("A scheme for farmers");
         schemeData.setNotificationDate("2024-06-15");
         schemeData.setUrl("https://agriculture.gov.in");
+        schemeData.setCreatedAt(1609459200000L);
         
         assertEquals("Agriculture Scheme", schemeData.getScheme());
         assertEquals("A scheme for farmers", schemeData.getDescription());
         assertEquals("2024-06-15", schemeData.getNotificationDate());
         assertEquals("https://agriculture.gov.in", schemeData.getUrl());
+        assertEquals(1609459200000L, schemeData.getCreatedAt());
+    }
+
+    @Test
+    public void testIsRecentlyAdded_WithRecentTimestamp() {
+        // Scheme created just now should be considered recently added
+        SchemeData schemeData = new SchemeData(
+                "Test Scheme",
+                "Test Description",
+                "2024-01-01",
+                "https://example.com"
+        );
+        
+        assertTrue(schemeData.isRecentlyAdded());
+    }
+
+    @Test
+    public void testIsRecentlyAdded_WithOldTimestamp() {
+        // Scheme created 25 hours ago should not be considered recently added
+        long twentyFiveHoursAgo = System.currentTimeMillis() - (25 * 60 * 60 * 1000);
+        SchemeData schemeData = new SchemeData(
+                "Test Scheme",
+                "Test Description",
+                "2024-01-01",
+                "https://example.com",
+                twentyFiveHoursAgo
+        );
+        
+        assertFalse(schemeData.isRecentlyAdded());
+    }
+
+    @Test
+    public void testIsRecentlyAdded_WithZeroTimestamp() {
+        // Scheme with zero timestamp (unset) should not be considered recently added
+        SchemeData schemeData = new SchemeData();
+        schemeData.setCreatedAt(0);
+        
+        assertFalse(schemeData.isRecentlyAdded());
+    }
+
+    @Test
+    public void testIsRecentlyAdded_WithBoundaryTimestamp() {
+        // Scheme created exactly 23 hours ago should still be considered recently added
+        long twentyThreeHoursAgo = System.currentTimeMillis() - (23 * 60 * 60 * 1000);
+        SchemeData schemeData = new SchemeData(
+                "Test Scheme",
+                "Test Description",
+                "2024-01-01",
+                "https://example.com",
+                twentyThreeHoursAgo
+        );
+        
+        assertTrue(schemeData.isRecentlyAdded());
     }
 
     @Test
