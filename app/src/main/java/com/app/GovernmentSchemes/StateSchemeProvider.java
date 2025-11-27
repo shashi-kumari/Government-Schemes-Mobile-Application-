@@ -1,115 +1,161 @@
 package com.app.GovernmentSchemes;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StateSchemeProvider {
+    private static final String TAG = "StateSchemeProvider";
+    private static final String DATABASE_PATH = "urls";
     
-    private static final Map<String, String> AGRICULTURE_URLS = new HashMap<>();
-    private static final Map<String, String> BANKING_URLS = new HashMap<>();
-    private static final Map<String, String> BUSINESS_URLS = new HashMap<>();
-    private static final Map<String, String> EDUCATION_URLS = new HashMap<>();
-    private static final Map<String, String> HEALTH_URLS = new HashMap<>();
-    private static final Map<String, String> HOUSING_URLS = new HashMap<>();
+    // Thread-safe cache for storing fetched URLs to avoid repeated database calls
+    private static final Map<String, Map<String, String>> urlCache = new ConcurrentHashMap<>();
     
-    static {
-        // Agriculture URLs
-        AGRICULTURE_URLS.put("Andhra Pradesh", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/ANDHRA%20PRADESH");
-        AGRICULTURE_URLS.put("Arunachal Pradesh", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/ARUNACHAL%20PRADESH");
-        AGRICULTURE_URLS.put("Assam", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/ASSAM");
-        AGRICULTURE_URLS.put("Bihar", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/BIHAR");
-        AGRICULTURE_URLS.put("Chhattisgarh", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/CHHATTISGARH");
-        AGRICULTURE_URLS.put("Goa", "https://agri.goa.gov.in/wicket/page?4");
-        AGRICULTURE_URLS.put("Gujarat", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/GUJARAT");
-        AGRICULTURE_URLS.put("Haryana", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/HARYANA");
-        AGRICULTURE_URLS.put("Himachal Pradesh", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/HIMACHAL%20PRADESH");
-        AGRICULTURE_URLS.put("Jharkhand", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/JHARKHAND");
-        AGRICULTURE_URLS.put("Karnataka", "https://raitamitra.karnataka.gov.in/49/policy/en");
-        AGRICULTURE_URLS.put("Kerala", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/KERALA");
-        AGRICULTURE_URLS.put("Madhya Pradesh", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/MADHYA%20PRADESH");
-        AGRICULTURE_URLS.put("Maharashtra", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/MAHARASHTRA");
-        AGRICULTURE_URLS.put("Manipur", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/MANIPUR");
-        AGRICULTURE_URLS.put("Meghalaya", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/MEGHALAYA");
-        AGRICULTURE_URLS.put("Mizoram", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/MIZORAM");
-        AGRICULTURE_URLS.put("Nagaland", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/NAGALAND");
-        AGRICULTURE_URLS.put("Odisha", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/ODISHA");
-        AGRICULTURE_URLS.put("Punjab", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/PUNJAB");
-        AGRICULTURE_URLS.put("Rajasthan", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/RAJASTHAN");
-        AGRICULTURE_URLS.put("Sikkim", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/SIKKIM");
-        AGRICULTURE_URLS.put("Tamil Nadu", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/TAMIL%20NADU");
-        AGRICULTURE_URLS.put("Telangana", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/TELANGANA");
-        AGRICULTURE_URLS.put("Tripura", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/TRIPURA");
-        AGRICULTURE_URLS.put("Uttar Pradesh", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/UTTAR%20PRADESH");
-        AGRICULTURE_URLS.put("Uttarakhand", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/UTTARAKHAND");
-        AGRICULTURE_URLS.put("West Bengal", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/WEST%20BENGAL");
-        AGRICULTURE_URLS.put("Andaman and Nicobar Islands", "https://ddd.gov.in/agriculture-department/");
-        AGRICULTURE_URLS.put("Chandigarh", "https://chandigarhdistrict.nic.in/agriculture/");
-        AGRICULTURE_URLS.put("Dadra and Nagar Haveli and Daman and Diu", "https://ddd.gov.in/agriculture-department/");
-        AGRICULTURE_URLS.put("Delhi", "https://development.delhi.gov.in/development/agriculture-unit");
-        AGRICULTURE_URLS.put("Jammu and Kashmir", "https://agriwelfare.gov.in/en/AgricultureContigencyPlan/JAMMU%20AND%20KASHMIR");
-        AGRICULTURE_URLS.put("Ladakh", "https://ladakh.gov.in/agriculture/");
-        AGRICULTURE_URLS.put("Lakshadweep", "https://lakshadweep.gov.in/departments/agriculture/");
-        AGRICULTURE_URLS.put("Puducherry", "https://pdmc.da.gov.in/files/annual-action-plan/AAP202324/Puducherry%20Revised%20AAP%202023-24.pdf");
-        
-        // Banking URLs - placeholder URLs for demonstration
-        BANKING_URLS.put("Andhra Pradesh", "https://www.india.gov.in/state-government-portal");
-        BANKING_URLS.put("Karnataka", "https://www.india.gov.in/state-government-portal");
-        BANKING_URLS.put("Maharashtra", "https://www.india.gov.in/state-government-portal");
-        BANKING_URLS.put("Tamil Nadu", "https://www.india.gov.in/state-government-portal");
-        BANKING_URLS.put("Uttar Pradesh", "https://www.india.gov.in/state-government-portal");
-        
-        // Business URLs - placeholder URLs for demonstration
-        BUSINESS_URLS.put("Andhra Pradesh", "https://www.india.gov.in/state-government-portal");
-        BUSINESS_URLS.put("Karnataka", "https://www.india.gov.in/state-government-portal");
-        BUSINESS_URLS.put("Maharashtra", "https://www.india.gov.in/state-government-portal");
-        BUSINESS_URLS.put("Tamil Nadu", "https://www.india.gov.in/state-government-portal");
-        BUSINESS_URLS.put("Uttar Pradesh", "https://www.india.gov.in/state-government-portal");
-        
-        // Education URLs - placeholder URLs for demonstration
-        EDUCATION_URLS.put("Andhra Pradesh", "https://www.india.gov.in/state-government-portal");
-        EDUCATION_URLS.put("Karnataka", "https://www.india.gov.in/state-government-portal");
-        EDUCATION_URLS.put("Maharashtra", "https://www.india.gov.in/state-government-portal");
-        EDUCATION_URLS.put("Tamil Nadu", "https://www.india.gov.in/state-government-portal");
-        EDUCATION_URLS.put("Uttar Pradesh", "https://www.india.gov.in/state-government-portal");
-        
-        // Health URLs - placeholder URLs for demonstration
-        HEALTH_URLS.put("Andhra Pradesh", "https://www.india.gov.in/state-government-portal");
-        HEALTH_URLS.put("Karnataka", "https://www.india.gov.in/state-government-portal");
-        HEALTH_URLS.put("Maharashtra", "https://www.india.gov.in/state-government-portal");
-        HEALTH_URLS.put("Tamil Nadu", "https://www.india.gov.in/state-government-portal");
-        HEALTH_URLS.put("Uttar Pradesh", "https://www.india.gov.in/state-government-portal");
-        
-        // Housing URLs - placeholder URLs for demonstration
-        HOUSING_URLS.put("Andhra Pradesh", "https://www.india.gov.in/state-government-portal");
-        HOUSING_URLS.put("Karnataka", "https://www.india.gov.in/state-government-portal");
-        HOUSING_URLS.put("Maharashtra", "https://www.india.gov.in/state-government-portal");
-        HOUSING_URLS.put("Tamil Nadu", "https://www.india.gov.in/state-government-portal");
-        HOUSING_URLS.put("Uttar Pradesh", "https://www.india.gov.in/state-government-portal");
+    /**
+     * Callback interface for async URL fetching operations.
+     */
+    public interface StateUrlCallback {
+        void onUrlLoaded(@Nullable String url);
+        void onError(String errorMessage);
     }
     
-    @Nullable
-    public static String getStateUrl(SchemeSector sector, String stateName) {
-        Map<String, String> urls = getUrlMapForSector(sector);
-        return urls.get(stateName);
+    /**
+     * Callback interface for loading all URLs for a sector.
+     */
+    public interface SectorUrlsCallback {
+        void onUrlsLoaded(Map<String, String> urls);
+        void onError(String errorMessage);
     }
     
-    private static Map<String, String> getUrlMapForSector(SchemeSector sector) {
-        switch (sector) {
-            case AGRICULTURE:
-                return AGRICULTURE_URLS;
-            case BANKING:
-                return BANKING_URLS;
-            case BUSINESS:
-                return BUSINESS_URLS;
-            case EDUCATION:
-                return EDUCATION_URLS;
-            case HEALTH:
-                return HEALTH_URLS;
-            case HOUSING:
-                return HOUSING_URLS;
-            default:
-                return new HashMap<>();
+    /**
+     * Fetches the URL for a specific state and sector from Firebase Database.
+     * 
+     * @param sector The scheme sector (e.g., AGRICULTURE, BANKING)
+     * @param stateName The name of the state
+     * @param callback Callback to receive the URL or error
+     */
+    public static void getStateUrl(SchemeSector sector, String stateName, StateUrlCallback callback) {
+        String sectorName = sector.name().toLowerCase();
+        
+        // Check cache first
+        if (urlCache.containsKey(sectorName)) {
+            Map<String, String> sectorUrls = urlCache.get(sectorName);
+            if (sectorUrls != null) {
+                callback.onUrlLoaded(sectorUrls.get(stateName));
+                return;
+            }
         }
+        
+        // Fetch from database
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference(DATABASE_PATH)
+                .child(sectorName)
+                .child("states");
+        
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Map<String, String> sectorUrls = new ConcurrentHashMap<>();
+                String foundUrl = null;
+                
+                for (DataSnapshot stateSnapshot : snapshot.getChildren()) {
+                    StateUrlData stateData = stateSnapshot.getValue(StateUrlData.class);
+                    if (stateData != null && stateData.getName() != null && stateData.getUrl() != null) {
+                        sectorUrls.put(stateData.getName(), stateData.getUrl());
+                        if (stateData.getName().equalsIgnoreCase(stateName)) {
+                            foundUrl = stateData.getUrl();
+                        }
+                    }
+                }
+                
+                // Update cache
+                urlCache.put(sectorName, sectorUrls);
+                
+                callback.onUrlLoaded(foundUrl);
+            }
+            
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Database error: " + error.getMessage());
+                callback.onError(error.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Fetches all URLs for a specific sector from Firebase Database.
+     * 
+     * @param sector The scheme sector
+     * @param callback Callback to receive the URLs map or error
+     */
+    public static void getSectorUrls(SchemeSector sector, SectorUrlsCallback callback) {
+        String sectorName = sector.name().toLowerCase();
+        
+        // Check cache first
+        if (urlCache.containsKey(sectorName)) {
+            Map<String, String> cachedUrls = urlCache.get(sectorName);
+            if (cachedUrls != null) {
+                callback.onUrlsLoaded(new HashMap<>(cachedUrls));
+                return;
+            }
+        }
+        
+        // Fetch from database
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference(DATABASE_PATH)
+                .child(sectorName)
+                .child("states");
+        
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Map<String, String> sectorUrls = new ConcurrentHashMap<>();
+                
+                for (DataSnapshot stateSnapshot : snapshot.getChildren()) {
+                    StateUrlData stateData = stateSnapshot.getValue(StateUrlData.class);
+                    if (stateData != null && stateData.getName() != null && stateData.getUrl() != null) {
+                        sectorUrls.put(stateData.getName(), stateData.getUrl());
+                    }
+                }
+                
+                // Update cache
+                urlCache.put(sectorName, sectorUrls);
+                
+                callback.onUrlsLoaded(new HashMap<>(sectorUrls));
+            }
+            
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Database error: " + error.getMessage());
+                callback.onError(error.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Clears the URL cache. Useful when data needs to be refreshed.
+     */
+    public static void clearCache() {
+        urlCache.clear();
+    }
+    
+    /**
+     * Clears the cache for a specific sector.
+     * 
+     * @param sector The sector to clear from cache
+     */
+    public static void clearSectorCache(SchemeSector sector) {
+        urlCache.remove(sector.name().toLowerCase());
     }
 }
