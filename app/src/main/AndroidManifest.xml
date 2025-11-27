@@ -41,6 +41,9 @@
     <activity android:name=".LogoutActivity" />
     <activity android:name=".GovernmentSchemesActivity" />
     <activity android:name=".NotificationListActivity" />
+    <activity android:name=".AdminDashboardActivity" />
+    <activity android:name=".AdminUserListActivity" />
+    <activity android:name=".AdminUserDetailActivity" />
 
 
     <meta-data

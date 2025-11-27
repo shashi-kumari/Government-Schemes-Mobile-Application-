@@ -4,7 +4,13 @@ package com.app.GovernmentSchemes;
 public class HelperClass {
 
     private boolean admnAccess;
+    private String uuid;
     String name, email, username, password;
+
+    // Default constructor required for Firebase
+    public HelperClass() {
+        this.admnAccess = false;
+    }
 
     public String getName() {
         return name;
@@ -36,6 +42,14 @@ public class HelperClass {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public HelperClass(String name, String email, String username, String password) {
