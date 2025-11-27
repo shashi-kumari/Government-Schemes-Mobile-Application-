@@ -9,16 +9,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 // In your LogoutActivity or any relevant activity
 public class LogoutActivity extends AppCompatActivity {
+    private ThemeManager themeManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize theme manager and apply current theme
+        themeManager = new ThemeManager(this);
+        themeManager.applyCurrentTheme();
+        
         super.onCreate(savedInstanceState);
 
         // Clear user session or credentials
         clearUserSession();
 
-        // Navigate back to the login screen
-        Intent intent = new Intent(this, LoginActivity.class);
+        // Navigate back to the welcome screen (instead of login screen directly)
+        Intent intent = new Intent(this, WelcomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         Toast.makeText(getBaseContext(),"Logged out successfully",Toast.LENGTH_SHORT).show();
         startActivity(intent);

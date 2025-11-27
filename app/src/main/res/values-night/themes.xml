@@ -1,7 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.GovernmentSchemes" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- Dark theme for the application. -->
+    <style name="Theme.GovernmentSchemes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/government_green</item>
+        <item name="colorPrimaryVariant">@color/government_green_dark</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>  
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/surface_dark</item>
+        <item name="colorOnSurface">@color/on_surface_dark</item>
+        <item name="android:colorBackground">@color/background_dark</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="21">?attr/colorPrimaryVariant</item>
+        <!-- Custom attributes -->
+        <item name="cardBackgroundColor">@color/card_background_dark</item>
+        <!-- Text and hint colors -->
+        <item name="android:textColorHint">@color/on_surface_dark</item>
+        <item name="android:textColorSecondary">@color/on_surface_dark</item>
+        <!-- Customize your theme here. -->
     </style>
 </resources>

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bckg"
+    android:background="@drawable/background_gradient"
     android:orientation="vertical"
     android:gravity="center"
     tools:context=".SignupActivity">
@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         app:cardCornerRadius="30dp"
-        app:cardElevation="20dp">
+        app:cardElevation="20dp"
+        app:cardBackgroundColor="?attr/cardBackgroundColor">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +31,8 @@
                 android:text="Sign Up"
                 android:textSize="36sp"
                 android:textAlignment="center"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -40,7 +42,7 @@
                 android:padding="8dp"
                 android:hint="Name"
                 android:drawablePadding="8dp"
-                android:textColor="@color/black"/>
+                android:textColor="?attr/colorOnSurface"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -50,7 +52,7 @@
                 android:padding="8dp"
                 android:hint="Email"
                 android:drawablePadding="8dp"
-                android:textColor="@color/black"/>
+                android:textColor="?attr/colorOnSurface"/>
 
 
             <EditText
@@ -61,7 +63,7 @@
                 android:padding="8dp"
                 android:hint="Username"
                 android:drawablePadding="8dp"
-                android:textColor="@color/black"/>
+                android:textColor="?attr/colorOnSurface"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -72,7 +74,7 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:drawablePadding="8dp"
-                android:textColor="@color/black"/>
+                android:textColor="?attr/colorOnSurface"/>
 
             <Button
                 android:layout_width="match_parent"

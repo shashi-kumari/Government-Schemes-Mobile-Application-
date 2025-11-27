@@ -1,10 +1,10 @@
 package com.app.GovernmentSchemes;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
 import android.widget.TextView;
-
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,21 +14,39 @@ import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-public class Agriculture_activity extends AppCompatActivity {
-    TextView lblXmlData, lblJsonData;
+
+public class Agriculture_activity extends BaseActivity {
+    TextView lblXmlData;
     TextView header_title;
+    android.widget.Button govtSchemesButton;
     int mode = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view);
-        header_title = findViewById(com.app.GovernmentSchemes.R.id.header_title);
-
+        setContentView(R.layout.activity_agriculture);
+        
+        // Setup common navigation elements
+        setupCommonViews();
+        
+        header_title = findViewById(R.id.header_title);
         header_title.setText("Agriculture Sector");
-        lblXmlData = (TextView) findViewById(R.id.lbl_xml_data);
+        lblXmlData = findViewById(R.id.lbl_xml_data);
+        govtSchemesButton = findViewById(R.id.govt_schemes_button);
+        govtSchemesButton.setOnClickListener(this);
         mode = getIntent().getIntExtra("mode", 0);
         parseXmlDocument();
+    }
+
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        
+        if (view.equals(govtSchemesButton)) {
+            Intent govtSchemes = new Intent(Agriculture_activity.this, GovernmentSchemesActivity.class);
+            govtSchemes.putExtra(GovernmentSchemesActivity.EXTRA_SECTOR, SchemeSector.AGRICULTURE.name());
+            startActivity(govtSchemes);
+        }
     }
 
     public String parseXmlDocument() {
