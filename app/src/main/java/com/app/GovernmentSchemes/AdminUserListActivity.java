@@ -108,7 +108,7 @@ public class AdminUserListActivity extends AppCompatActivity {
                 userList.clear();
                 
                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    HelperClass user = userSnapshot.getValue(HelperClass.class);
+                    HelperClass user = HelperClass.processSnapshot(userSnapshot);
                     if (user != null) {
                         user.setUuid(userSnapshot.getKey());
                         userList.add(user);

@@ -1,6 +1,8 @@
 package com.app.GovernmentSchemes;
 
 
+import com.google.firebase.database.DataSnapshot;
+
 public class HelperClass {
 
     private boolean admnAccess;
@@ -10,6 +12,16 @@ public class HelperClass {
     // Default constructor required for Firebase
     public HelperClass() {
         this.admnAccess = false;
+    }
+
+    public static HelperClass processSnapshot(DataSnapshot userSnapshot) {
+        HelperClass user = new HelperClass();
+        user.setName(userSnapshot.hasChild("name") ? userSnapshot.child("name").getValue(String.class) : null);
+        user.setEmail(userSnapshot.hasChild("email") ? userSnapshot.child("email").getValue(String.class) : null);
+        user.setUsername(userSnapshot.hasChild("username") ? userSnapshot.child("username").getValue(String.class) : null);
+        user.setPassword(userSnapshot.hasChild("password") ? userSnapshot.child("password").getValue(String.class) : null);
+        user.setAdmnAccess(userSnapshot.hasChild("admnAccess") ? userSnapshot.child("admnAccess").getValue(Boolean.class) : false);
+        return user;
     }
 
     public String getName() {
