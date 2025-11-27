@@ -17,7 +17,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,16 +59,43 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    // Sign in success, go to MainActivity
+                                    // Sign in success, fetch user details from DB then go to MainActivity
                                     Log.d(TAG, "signInWithEmail:success");
+                                    String uuid = mAuth.getCurrentUser().getUid();
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(uuid);
+                                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.exists()) {
+                                                String nameFromDB = null, emailFromDB = null, usernameFromDB = null;
+                                                nameFromDB = snapshot.child("name").getValue(String.class);
+                                                emailFromDB = snapshot.child("email").getValue(String.class);
+                                                usernameFromDB = snapshot.child("username").getValue(String.class);
+
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                intent.putExtra("name", nameFromDB);
+                                                intent.putExtra("email", emailFromDB);
+                                                intent.putExtra("username", usernameFromDB);
+                                                intent.putExtra("isGuest", false);
+                                                Log.d("LoginActivity", "Login successful, starting MainActivity with DB data");
                                     startActivity(intent);
                                     finish();
+                                            } else {
+                                                Log.w(TAG, "User not found in database after authentication");
+                                                Toast.makeText(LoginActivity.this, "Authenticated but user record missing.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.e("LoginActivity", "Database error: " + error.getMessage());
+                                            Toast.makeText(LoginActivity.this, "Database error.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

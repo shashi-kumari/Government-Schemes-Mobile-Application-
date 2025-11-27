@@ -168,6 +168,8 @@ public class SignupActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         try {
+                            String uuid = mAuth.getCurrentUser().getUid();
+
                             // 3\) Encrypt password before saving to Realtime DB
                             String encryptedPassword = PasswordUtils.encryptPassword(password);
 
@@ -175,7 +177,7 @@ public class SignupActivity extends AppCompatActivity {
                                     new HelperClass(name, email, username, encryptedPassword);
 
                             // 4\) Save user data in Realtime DB
-                            reference.child(username)
+                            reference.child(uuid)
                                     .setValue(helperClass)
                                     .addOnSuccessListener(aVoid -> {
                                         Toast.makeText(SignupActivity.this,

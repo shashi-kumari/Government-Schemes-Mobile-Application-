@@ -3,6 +3,7 @@ package com.app.GovernmentSchemes;
 
 public class HelperClass {
 
+    private boolean admnAccess;
     String name, email, username, password;
 
     public String getName() {
@@ -42,8 +43,14 @@ public class HelperClass {
         this.email = email;
         this.username = username;
         this.password = password;
+        this.admnAccess = false;
     }
 
-    public HelperClass() {
+    public void setAdmnAccess(boolean admnAccess) {
+        this.admnAccess = admnAccess;
+    }
+
+    public boolean getAdmnAccess() {
+        return admnAccess;
     }
 }
