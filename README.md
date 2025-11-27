@@ -8,7 +8,10 @@ This is a fully functional Android application that serves citizens by providing
 
 ## Features
 
+### User Features
 - **User Authentication**: Complete login and signup functionality with Firebase integration
+  - Secure password encryption using SHA-256 with salt
+  - Comprehensive input validation for all fields
 - **Scheme Categories**: Six organized sectors covering all major government schemes:
   - Agriculture Sector - Agricultural schemes and benefits
   - Banking Sector - Banking and financial schemes
@@ -16,11 +19,26 @@ This is a fully functional Android application that serves citizens by providing
   - Education Sector - Educational schemes and scholarships
   - Health Sector - Healthcare and medical schemes
   - Housing Sector - Housing and infrastructure schemes
-- **Scheme Information**: Detailed scheme information parsed from XML data assets
+- **Scheme Information**: Detailed scheme information fetched from Firebase Realtime Database
+  - Latest schemes displayed first for easy access
+  - Clickable URLs to view scheme details in browser
 - **Push Notifications**: Notification subscription service to stay updated
+- **In-App Notifications**: Notification list with clickable links to scheme information
 - **Material Design UI**: Modern Android interface following Material Design guidelines
-- **Firebase Integration**: Real-time database for user management and data storage
-- **Offline Data Access**: Scheme information stored locally in XML assets
+- **Theme Support**: Light and dark theme management
+
+### Admin Features
+- **Admin Dashboard**: Centralized admin control panel for managing the application
+- **User Management**: View, edit, and delete user accounts
+  - Toggle admin access for users
+  - View all registered users with admin badges
+- **Scheme Management**: Add new schemes to any category
+  - Create schemes with name, description, notification date, and URL
+  - Optional push notification trigger for new schemes
+  - View recently added schemes (last 24 hours)
+- **URL Management**: Modify state-wise URLs for each scheme category
+  - Category-based URL organization
+  - State-by-state URL configuration
 
 ## Project Structure
 
@@ -32,26 +50,54 @@ app/
 │   │   ├── LoginActivity.java              # User login functionality
 │   │   ├── SignupActivity.java             # User registration functionality
 │   │   ├── LogoutActivity.java             # User logout functionality
-│   │   ├── HelperClass.java                # Data model for user information
+│   │   ├── SplashActivity.java             # App splash screen
+│   │   ├── WelcomeActivity.java            # Welcome screen
+│   │   ├── BaseActivity.java               # Base activity with common functionality
+│   │   │
+│   │   ├── # Sector Activities
 │   │   ├── Agriculture_activity.java       # Agriculture schemes display
 │   │   ├── banking_activity.java           # Banking schemes display
 │   │   ├── business_activity.java          # Business schemes display
 │   │   ├── education_activity.java         # Education schemes display
 │   │   ├── health_activity.java            # Health schemes display
-│   │   └── housing_activity.java           # Housing schemes display
-│   ├── assets/
-│   │   ├── agridata.xml                    # Agriculture schemes data
-│   │   ├── bankingdata.xml                 # Banking schemes data
-│   │   ├── businessdata.xml                # Business schemes data
-│   │   ├── education.xml                   # Education schemes data
-│   │   ├── health.xml                      # Health schemes data
-│   │   └── housing.xml                     # Housing schemes data
+│   │   ├── housing_activity.java           # Housing schemes display
+│   │   ├── GovernmentSchemesActivity.java  # Government schemes browsing
+│   │   │
+│   │   ├── # Admin Activities
+│   │   ├── AdminDashboardActivity.java     # Admin control panel
+│   │   ├── AdminUserListActivity.java      # User management list
+│   │   ├── AdminUserDetailActivity.java    # User detail editing
+│   │   ├── AdminAddSchemeActivity.java     # Add new schemes
+│   │   ├── AdminRecentSchemesActivity.java # View recently added schemes
+│   │   ├── AdminUrlManagementActivity.java # Manage state URLs by category
+│   │   │
+│   │   ├── # Data Models
+│   │   ├── HelperClass.java                # User data model
+│   │   ├── SchemeData.java                 # Scheme data model
+│   │   ├── StateUrlData.java               # State URL data model
+│   │   ├── Notification.java               # Notification data model
+│   │   │
+│   │   ├── # Data Providers
+│   │   ├── SchemeDataProvider.java         # Firebase scheme data fetching
+│   │   ├── StateSchemeProvider.java        # State scheme URL provider
+│   │   ├── SchemeSector.java               # Scheme sector enumeration
+│   │   ├── StateScheme.java                # State scheme enumeration
+│   │   │
+│   │   ├── # Utilities
+│   │   ├── PasswordUtils.java              # Password encryption utilities
+│   │   ├── ValidationUtils.java            # Input validation utilities
+│   │   ├── ThemeManager.java               # Theme management
+│   │   │
+│   │   └── NotificationListActivity.java   # In-app notification list
+│   │
 │   ├── res/
 │   │   ├── layout/
 │   │   │   ├── activity_main.xml           # Main dashboard layout
 │   │   │   ├── activity_login.xml          # Login screen layout
 │   │   │   ├── activity_sign_up.xml        # Signup screen layout
-│   │   │   └── activity_view.xml           # Scheme details view layout
+│   │   │   ├── activity_view.xml           # Scheme details view layout
+│   │   │   ├── activity_admin_*.xml        # Admin screen layouts
+│   │   │   └── item_*.xml                  # List item layouts
 │   │   ├── values/
 │   │   │   ├── strings.xml                 # String resources
 │   │   │   ├── colors.xml                  # Color resources
@@ -77,8 +123,9 @@ app/
 - **Database**: Firebase Realtime Database
 - **Authentication**: Firebase Authentication
 - **Notifications**: Firebase Cloud Messaging (FCM)
-- **Data Storage**: XML assets for scheme information
+- **Data Storage**: Firebase Realtime Database for schemes and user data
 - **Image Loading**: Picasso library for efficient image handling
+- **Security**: SHA-256 password hashing with salt
 
 ## Dependencies
 
@@ -135,37 +182,109 @@ app/
 
 ### App Usage
 
-1. **Registration**: New users can sign up with their details
+#### Regular Users
+1. **Registration**: New users can sign up with their details (validated inputs, encrypted password)
 2. **Login**: Existing users can log in with their credentials
 3. **Browse Schemes**: Select from six different scheme categories
-4. **View Details**: Tap on any category to view detailed scheme information
-5. **Notifications**: Subscribe to get notified about new schemes and updates
+4. **View Details**: Tap on any category to view detailed scheme information (latest first)
+5. **Open URLs**: Click on scheme URLs to view more details in browser
+6. **Notifications**: View in-app notifications and subscribe to push notifications
 
-## Scheme Data Structure
+#### Admin Users
+1. **Admin Dashboard**: Access centralized admin controls (visible to admin users)
+2. **User Management**: View, edit, or delete user accounts; toggle admin access
+3. **Add Schemes**: Create new schemes for any category with optional push notifications
+4. **View Recent Schemes**: See all schemes added in the last 24 hours
+5. **Manage URLs**: Update state-wise URLs for each scheme category
 
-The application uses XML files stored in the `assets` folder to provide scheme information. Each sector has its own XML file containing:
+## Firebase Database Structure
 
-- **SCHEME**: Name of the government scheme
-- **DESC**: Detailed description of the scheme, eligibility criteria, and benefits
+The application uses Firebase Realtime Database for storing scheme and user data. The database structure is organized as follows:
+
+### Schemes Data
+```json
+{
+  "schemes": {
+    "agriculture": [
+      {
+        "scheme": "PM-KISAN",
+        "description": "Income support to farmers...",
+        "notificationDate": "2024-01-15",
+        "url": "https://pmkisan.gov.in",
+        "createdAt": 1700000000000
+      }
+    ],
+    "banking": [...],
+    "business": [...],
+    "education": [...],
+    "health": [...],
+    "housing": [...]
+  }
+}
+```
+
+### State URLs Data
+```json
+{
+  "url": {
+    "agriculture": {
+      "states": [
+        {
+          "code": "AP",
+          "name": "Andhra Pradesh",
+          "url": "https://..."
+        }
+      ]
+    }
+  }
+}
+```
+
+### Users Data
+```json
+{
+  "users": {
+    "username": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "username": "johndoe",
+      "password": "encrypted_password",
+      "admnAccess": false
+    }
+  }
+}
+```
 
 ### Available Scheme Categories
 
-1. **Agriculture** (`agridata.xml`) - Farming, subsidies, and agricultural development schemes
-2. **Banking** (`bankingdata.xml`) - Financial services, loans, and banking schemes
-3. **Business** (`businessdata.xml`) - Entrepreneurship, startup support, and business development schemes
-4. **Education** (`education.xml`) - Educational scholarships, grants, and academic support schemes
-5. **Health** (`health.xml`) - Healthcare schemes, medical assistance, and wellness programs
-6. **Housing** (`housing.xml`) - Housing schemes, infrastructure development, and shelter programs
+1. **Agriculture** - Farming, subsidies, and agricultural development schemes
+2. **Banking** - Financial services, loans, and banking schemes
+3. **Business** - Entrepreneurship, startup support, and business development schemes
+4. **Education** - Educational scholarships, grants, and academic support schemes
+5. **Health** - Healthcare schemes, medical assistance, and wellness programs
+6. **Housing** - Housing schemes, infrastructure development, and shelter programs
 
 ## Architecture
 
-The application follows a simple activity-based architecture:
+The application follows a simple activity-based architecture with role-based access control:
 
-- **Authentication Flow**: Login → Signup → Main Dashboard
+### User Flow
+- **Authentication Flow**: Splash → Welcome → Login/Signup → Main Dashboard
 - **Main Dashboard**: Category selection with navigation to specific scheme activities
-- **Scheme Activities**: XML parsing and display of scheme information
-- **Data Layer**: Firebase for user data, XML assets for scheme information
+- **Scheme Activities**: Firebase data fetching and display of scheme information
 - **Notification Service**: Firebase Cloud Messaging integration
+
+### Admin Flow
+- **Admin Authentication**: Login → Admin Dashboard (if admin user)
+- **User Management**: View all users → Edit/Delete user details
+- **Scheme Management**: Add new schemes → View recent schemes → Send notifications
+- **URL Management**: Select category → Edit state-wise URLs
+
+### Data Layer
+- **User Data**: Firebase Realtime Database with encrypted passwords
+- **Scheme Data**: Firebase Realtime Database with real-time sync
+- **State URLs**: Firebase Realtime Database with category-wise organization
+- **Caching**: In-memory caching for improved performance
 
 ## CI/CD & Code Quality
 
