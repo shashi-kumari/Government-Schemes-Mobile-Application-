@@ -20,6 +20,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
     
     private TextView welcomeText;
     private Button manageUsersButton;
+    private Button manageUrlsButton;
     private Button viewSchemesButton;
     private Button logoutButton;
     
@@ -48,6 +49,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         // Initialize views
         welcomeText = findViewById(R.id.admin_welcome_text);
         manageUsersButton = findViewById(R.id.manage_users_button);
+        manageUrlsButton = findViewById(R.id.manage_urls_button);
         viewSchemesButton = findViewById(R.id.view_schemes_button);
         logoutButton = findViewById(R.id.admin_logout_button);
 
@@ -66,6 +68,16 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 Intent userListIntent = new Intent(AdminDashboardActivity.this, AdminUserListActivity.class);
                 userListIntent.putExtra("adminUuid", adminUuid);
                 startActivity(userListIntent);
+            }
+        });
+
+        manageUrlsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Navigate to URL management");
+                Intent urlManagementIntent = new Intent(AdminDashboardActivity.this, AdminUrlManagementActivity.class);
+                urlManagementIntent.putExtra("adminUuid", adminUuid);
+                startActivity(urlManagementIntent);
             }
         });
 

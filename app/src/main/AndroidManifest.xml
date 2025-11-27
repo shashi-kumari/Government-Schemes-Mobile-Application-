@@ -44,6 +44,7 @@
     <activity android:name=".AdminDashboardActivity" />
     <activity android:name=".AdminUserListActivity" />
     <activity android:name=".AdminUserDetailActivity" />
+    <activity android:name=".AdminUrlManagementActivity" />
 
 
     <meta-data
