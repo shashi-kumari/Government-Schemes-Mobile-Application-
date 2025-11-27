@@ -1,4 +1,35 @@
-# Authentication Security Improvements
+# Recent Changes Summary
+
+## Latest Updates
+
+### Admin Features
+- **Admin Dashboard**: Added centralized admin control panel for application management
+- **User Management**: Admins can view, edit, and delete user accounts; toggle admin access
+- **Scheme Management**: Admins can add new schemes to any category with:
+  - Scheme name, description, notification date, and URL
+  - Optional push notification trigger
+  - View recently added schemes (last 24 hours)
+- **URL Management**: Admins can modify state-wise URLs by category
+
+### Firebase Database Integration
+- Replaced XML-based scheme data with Firebase Realtime Database
+- Added `SchemeData` model for scheme information
+- Added `SchemeDataProvider` for async Firebase data fetching with caching
+- Added `StateSchemeProvider` for dynamic state URL management
+- Schemes now sorted by creation date (latest first)
+
+### Security Improvements
+- **Password Encryption**: SHA-256 hashing with unique salt per password
+- **Input Validation**: Comprehensive validation for name, email, username, password
+- **Secure Authentication**: Passwords never stored in plain text
+
+### User Experience
+- Added in-app notification list with clickable links
+- Added theme management support
+- Added splash screen and welcome activity
+- Admin dashboard icon visible only for admin users
+
+## Authentication Security Improvements
 
 ## Summary of Changes
 
