@@ -60,10 +60,15 @@ public class SchemeData {
     }
 
     /**
-     * Checks if this scheme has a valid URL (not "na" or empty).
-     * @return true if the scheme has a valid URL that can be opened in a browser
+     * Checks if this scheme has a valid URL (not "na" or empty) with a safe scheme (http/https).
+     * @return true if the scheme has a valid URL that can be safely opened in a browser
      */
     public boolean hasValidUrl() {
-        return url != null && !url.isEmpty() && !url.equalsIgnoreCase("na");
+        if (url == null || url.isEmpty() || url.equalsIgnoreCase("na")) {
+            return false;
+        }
+        // Only allow http and https schemes for security
+        String lowerUrl = url.toLowerCase();
+        return lowerUrl.startsWith("http://") || lowerUrl.startsWith("https://");
     }
 }

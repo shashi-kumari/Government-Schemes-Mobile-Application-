@@ -64,9 +64,15 @@ public class SchemeDataProvider {
                 List<SchemeData> schemes = new ArrayList<>();
                 
                 for (DataSnapshot schemeSnapshot : snapshot.getChildren()) {
-                    SchemeData schemeData = schemeSnapshot.getValue(SchemeData.class);
-                    if (schemeData != null) {
-                        schemes.add(schemeData);
+                    try {
+                        SchemeData schemeData = schemeSnapshot.getValue(SchemeData.class);
+                        if (schemeData != null) {
+                            schemes.add(schemeData);
+                        } else {
+                            Log.w(TAG, "Failed to deserialize scheme data for key: " + schemeSnapshot.getKey());
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error deserializing scheme data for key: " + schemeSnapshot.getKey(), e);
                     }
                 }
                 

@@ -49,9 +49,17 @@ public class SchemeDataTest {
     }
 
     @Test
-    public void testHasValidUrl_WithValidUrl() {
+    public void testHasValidUrl_WithHttpsUrl() {
         SchemeData schemeData = new SchemeData();
         schemeData.setUrl("https://example.com");
+        
+        assertTrue(schemeData.hasValidUrl());
+    }
+
+    @Test
+    public void testHasValidUrl_WithHttpUrl() {
+        SchemeData schemeData = new SchemeData();
+        schemeData.setUrl("http://example.com");
         
         assertTrue(schemeData.hasValidUrl());
     }
@@ -94,5 +102,41 @@ public class SchemeDataTest {
         schemeData.setUrl("Na");
         
         assertFalse(schemeData.hasValidUrl());
+    }
+
+    @Test
+    public void testHasValidUrl_WithJavascriptScheme() {
+        // Security test: javascript URLs should not be considered valid
+        SchemeData schemeData = new SchemeData();
+        schemeData.setUrl("javascript:alert('xss')");
+        
+        assertFalse(schemeData.hasValidUrl());
+    }
+
+    @Test
+    public void testHasValidUrl_WithFileScheme() {
+        // Security test: file URLs should not be considered valid
+        SchemeData schemeData = new SchemeData();
+        schemeData.setUrl("file:///etc/passwd");
+        
+        assertFalse(schemeData.hasValidUrl());
+    }
+
+    @Test
+    public void testHasValidUrl_WithDataScheme() {
+        // Security test: data URLs should not be considered valid
+        SchemeData schemeData = new SchemeData();
+        schemeData.setUrl("data:text/html,<script>alert('xss')</script>");
+        
+        assertFalse(schemeData.hasValidUrl());
+    }
+
+    @Test
+    public void testHasValidUrl_WithUpperCaseHttps() {
+        // HTTPS in uppercase should be valid
+        SchemeData schemeData = new SchemeData();
+        schemeData.setUrl("HTTPS://example.com");
+        
+        assertTrue(schemeData.hasValidUrl());
     }
 }
