@@ -280,6 +280,8 @@
         android:layout_marginTop="52dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="8dp"
+        android:visibility="gone"
+        android:contentDescription="Admin Dashboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.35"
         app:layout_constraintStart_toEndOf="@+id/theme_toggle"
