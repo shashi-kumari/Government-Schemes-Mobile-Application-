@@ -8,7 +8,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,8 +66,6 @@ public class health_activity extends BaseActivity {
     }
 
     private void displaySchemes(List<SchemeData> schemes) {
-        Log.w("","Schemes loaded: " + schemes.size());
-
         if (schemes.isEmpty()) {
             lblXmlData.setText("No schemes available.");
             return;

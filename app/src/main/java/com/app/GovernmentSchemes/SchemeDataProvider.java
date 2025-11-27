@@ -61,7 +61,6 @@ public class SchemeDataProvider {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<SchemeData> schemes = new ArrayList<>();
-                Log.w(TAG, "Deserializing scheme data for key: " + snapshot.getKey()+" size: "+snapshot.getChildrenCount());
                 
                 for (DataSnapshot schemeSnapshot : snapshot.getChildren()) {
                     try {
