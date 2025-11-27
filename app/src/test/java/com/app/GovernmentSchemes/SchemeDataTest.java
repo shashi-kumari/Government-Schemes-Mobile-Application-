@@ -2,6 +2,11 @@ package com.app.GovernmentSchemes;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -216,5 +221,57 @@ public class SchemeDataTest {
         schemeData.setUrl("HTTPS://example.com");
         
         assertTrue(schemeData.hasValidUrl());
+    }
+
+    @Test
+    public void testSortSchemesByCreatedAtDescending() {
+        // Create schemes with different createdAt timestamps
+        long now = System.currentTimeMillis();
+        SchemeData scheme1 = new SchemeData("Scheme 1", "Description 1", "2024-01-01", "https://example1.com", now - 3000); // oldest
+        SchemeData scheme2 = new SchemeData("Scheme 2", "Description 2", "2024-01-02", "https://example2.com", now - 1000); // middle
+        SchemeData scheme3 = new SchemeData("Scheme 3", "Description 3", "2024-01-03", "https://example3.com", now);        // newest
+
+        // Add schemes in unsorted order
+        List<SchemeData> schemes = new ArrayList<>();
+        schemes.add(scheme1);
+        schemes.add(scheme3);
+        schemes.add(scheme2);
+
+        // Sort by createdAt descending (latest first) - same logic as in SchemeDataProvider
+        Collections.sort(schemes, new Comparator<SchemeData>() {
+            @Override
+            public int compare(SchemeData s1, SchemeData s2) {
+                return Long.compare(s2.getCreatedAt(), s1.getCreatedAt());
+            }
+        });
+
+        // Verify the order is newest first
+        assertEquals("Scheme 3", schemes.get(0).getScheme()); // newest should be first
+        assertEquals("Scheme 2", schemes.get(1).getScheme()); // middle should be second
+        assertEquals("Scheme 1", schemes.get(2).getScheme()); // oldest should be last
+    }
+
+    @Test
+    public void testSortSchemesByCreatedAtDescending_WithZeroTimestamps() {
+        // Test that schemes with zero timestamps (legacy schemes) are sorted to the end
+        long now = System.currentTimeMillis();
+        SchemeData schemeWithTimestamp = new SchemeData("New Scheme", "Description", "2024-01-01", "https://example.com", now);
+        SchemeData legacyScheme = new SchemeData("Legacy Scheme", "Description", "2024-01-02", "https://example.com", 0);
+
+        List<SchemeData> schemes = new ArrayList<>();
+        schemes.add(legacyScheme);
+        schemes.add(schemeWithTimestamp);
+
+        // Sort by createdAt descending
+        Collections.sort(schemes, new Comparator<SchemeData>() {
+            @Override
+            public int compare(SchemeData s1, SchemeData s2) {
+                return Long.compare(s2.getCreatedAt(), s1.getCreatedAt());
+            }
+        });
+
+        // Scheme with timestamp should be first, legacy scheme (0 timestamp) should be last
+        assertEquals("New Scheme", schemes.get(0).getScheme());
+        assertEquals("Legacy Scheme", schemes.get(1).getScheme());
     }
 }

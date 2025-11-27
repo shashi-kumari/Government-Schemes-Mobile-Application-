@@ -11,6 +11,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,6 +76,15 @@ public class SchemeDataProvider {
                         Log.e(TAG, "Error deserializing scheme data for key: " + schemeSnapshot.getKey(), e);
                     }
                 }
+                
+                // Sort schemes by createdAt descending (latest first)
+                Collections.sort(schemes, new Comparator<SchemeData>() {
+                    @Override
+                    public int compare(SchemeData s1, SchemeData s2) {
+                        // Sort in descending order (latest first)
+                        return Long.compare(s2.getCreatedAt(), s1.getCreatedAt());
+                    }
+                });
                 
                 // Update cache
                 schemeCache.put(sectorName, new ArrayList<>(schemes));
