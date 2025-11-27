@@ -27,6 +27,8 @@ render.experimental.xml
 *.jks
 *.keystore
 
+# Compiled class files
+*.class
 
 # Android Profiling
 *.hprof

@@ -45,6 +45,8 @@
     <activity android:name=".AdminUserListActivity" />
     <activity android:name=".AdminUserDetailActivity" />
     <activity android:name=".AdminUrlManagementActivity" />
+    <activity android:name=".AdminAddSchemeActivity" />
+    <activity android:name=".AdminRecentSchemesActivity" />
 
 
     <meta-data

@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 /**
  * Admin Dashboard Activity
  * This activity serves as the main dashboard for admin users.
- * Admins can manage users (view, modify, delete) from here.
+ * Admins can manage users (view, modify, delete), add new schemes, and view recent schemes.
  */
 public class AdminDashboardActivity extends AppCompatActivity {
 
@@ -21,6 +21,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private TextView welcomeText;
     private Button manageUsersButton;
     private Button manageUrlsButton;
+    private Button addSchemeButton;
+    private Button recentSchemesButton;
     private Button viewSchemesButton;
     private Button logoutButton;
     
@@ -50,6 +52,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
         welcomeText = findViewById(R.id.admin_welcome_text);
         manageUsersButton = findViewById(R.id.manage_users_button);
         manageUrlsButton = findViewById(R.id.manage_urls_button);
+        addSchemeButton = findViewById(R.id.add_scheme_button);
+        recentSchemesButton = findViewById(R.id.recent_schemes_button);
         viewSchemesButton = findViewById(R.id.view_schemes_button);
         logoutButton = findViewById(R.id.admin_logout_button);
 
@@ -78,6 +82,26 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 Intent urlManagementIntent = new Intent(AdminDashboardActivity.this, AdminUrlManagementActivity.class);
                 urlManagementIntent.putExtra("adminUuid", adminUuid);
                 startActivity(urlManagementIntent);
+            }
+        });
+
+        addSchemeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Navigate to add scheme");
+                Intent addSchemeIntent = new Intent(AdminDashboardActivity.this, AdminAddSchemeActivity.class);
+                addSchemeIntent.putExtra("adminUuid", adminUuid);
+                startActivity(addSchemeIntent);
+            }
+        });
+
+        recentSchemesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Navigate to recent schemes");
+                Intent recentSchemesIntent = new Intent(AdminDashboardActivity.this, AdminRecentSchemesActivity.class);
+                recentSchemesIntent.putExtra("adminUuid", adminUuid);
+                startActivity(recentSchemesIntent);
             }
         });
 
