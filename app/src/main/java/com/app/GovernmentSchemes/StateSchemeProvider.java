@@ -13,6 +13,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provider class for fetching state scheme URLs from Firebase Realtime Database.
@@ -36,8 +37,8 @@ public class StateSchemeProvider {
     private static final String TAG = "StateSchemeProvider";
     private static final String DATABASE_PATH = "url";
     
-    // Cache for storing fetched URLs to avoid repeated database calls
-    private static final Map<String, Map<String, String>> urlCache = new HashMap<>();
+    // Thread-safe cache for storing fetched URLs to avoid repeated database calls
+    private static final Map<String, Map<String, String>> urlCache = new ConcurrentHashMap<>();
     
     /**
      * Callback interface for async URL fetching operations.
@@ -83,12 +84,12 @@ public class StateSchemeProvider {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Map<String, String> sectorUrls = new HashMap<>();
+                Map<String, String> sectorUrls = new ConcurrentHashMap<>();
                 String foundUrl = null;
                 
                 for (DataSnapshot stateSnapshot : snapshot.getChildren()) {
                     StateUrlData stateData = stateSnapshot.getValue(StateUrlData.class);
-                    if (stateData != null && stateData.getName() != null) {
+                    if (stateData != null && stateData.getName() != null && stateData.getUrl() != null) {
                         sectorUrls.put(stateData.getName(), stateData.getUrl());
                         if (stateData.getName().equalsIgnoreCase(stateName)) {
                             foundUrl = stateData.getUrl();
@@ -123,7 +124,7 @@ public class StateSchemeProvider {
         if (urlCache.containsKey(sectorName)) {
             Map<String, String> cachedUrls = urlCache.get(sectorName);
             if (cachedUrls != null) {
-                callback.onUrlsLoaded(cachedUrls);
+                callback.onUrlsLoaded(new HashMap<>(cachedUrls));
                 return;
             }
         }
@@ -137,11 +138,11 @@ public class StateSchemeProvider {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Map<String, String> sectorUrls = new HashMap<>();
+                Map<String, String> sectorUrls = new ConcurrentHashMap<>();
                 
                 for (DataSnapshot stateSnapshot : snapshot.getChildren()) {
                     StateUrlData stateData = stateSnapshot.getValue(StateUrlData.class);
-                    if (stateData != null && stateData.getName() != null) {
+                    if (stateData != null && stateData.getName() != null && stateData.getUrl() != null) {
                         sectorUrls.put(stateData.getName(), stateData.getUrl());
                     }
                 }
@@ -149,7 +150,7 @@ public class StateSchemeProvider {
                 // Update cache
                 urlCache.put(sectorName, sectorUrls);
                 
-                callback.onUrlsLoaded(sectorUrls);
+                callback.onUrlsLoaded(new HashMap<>(sectorUrls));
             }
             
             @Override
