@@ -15,27 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Provider class for fetching state scheme URLs from Firebase Realtime Database.
- * 
- * Expected database structure:
- * {
- *   "url": {
- *     "category": {
- *       "states": [
- *         {
- *           "code": "CA",
- *           "name": "California",
- *           "url": "https://example.com/ca"
- *         }
- *       ]
- *     }
- *   }
- * }
- */
 public class StateSchemeProvider {
     private static final String TAG = "StateSchemeProvider";
-    private static final String DATABASE_PATH = "url";
+    private static final String DATABASE_PATH = "urls";
     
     // Thread-safe cache for storing fetched URLs to avoid repeated database calls
     private static final Map<String, Map<String, String>> urlCache = new ConcurrentHashMap<>();
