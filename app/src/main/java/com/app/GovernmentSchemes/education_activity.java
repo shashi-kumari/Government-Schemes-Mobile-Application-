@@ -1,19 +1,18 @@
 package com.app.GovernmentSchemes;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.List;
 
 public class education_activity extends BaseActivity {
     TextView lblXmlData;
@@ -32,10 +31,11 @@ public class education_activity extends BaseActivity {
         header_title = findViewById(R.id.header_title);
         header_title.setText("Education Sector");
         lblXmlData = findViewById(R.id.lbl_xml_data);
+        lblXmlData.setMovementMethod(LinkMovementMethod.getInstance());
         govtSchemesButton = findViewById(R.id.govt_schemes_button);
         govtSchemesButton.setOnClickListener(this);
         mode = getIntent().getIntExtra("mode", 0);
-        parseXmlDocument();
+        loadSchemesFromDatabase();
     }
 
     @Override
@@ -49,46 +49,72 @@ public class education_activity extends BaseActivity {
         }
     }
 
-    public String parseXmlDocument() {
-        try {
-            InputStream is = getAssets().open("education.xml");
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(is);
-            Element element = doc.getDocumentElement();
-            element.normalize();
-
-            NodeList nList = doc.getElementsByTagName("ROW");
-            for (int i = 0; i < nList.getLength(); i++) {
-                Node node = nList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element2 = (Element) node;
-
-                    // Retrieve the values of the "SCHEME" and "DESC" fields
-                    String scheme = getValue("SCHEME", element2);
-                    String desc = getValue("DESC", element2);
-
-                    // Print the values
-                    String formattedScheme = "<b>" + scheme + "</b>";
-                    String schemeHead = "<b><u>" + "SCHEME :" + "</b><u>";
-                    String descHead = "<b><u>" + "DESCRIPTION :" + "</b><u>";
-                    // Print the values with formatting
-                    lblXmlData.append(Html.fromHtml(schemeHead + formattedScheme + "<br>"));
-                    lblXmlData.append(Html.fromHtml(descHead + ""));
-                    lblXmlData.append(desc+"\n\n");
-                }
+    private void loadSchemesFromDatabase() {
+        lblXmlData.setText("Loading schemes...");
+        
+        SchemeDataProvider.getSchemesForSector(SchemeSector.EDUCATION, new SchemeDataProvider.SchemeListCallback() {
+            @Override
+            public void onSchemesLoaded(List<SchemeData> schemes) {
+                displaySchemes(schemes);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+
+            @Override
+            public void onError(String errorMessage) {
+                lblXmlData.setText("Error loading schemes: " + errorMessage);
+            }
+        });
     }
 
-    private static String getValue(String tag, Element element) {
-        NodeList nodeList =
-                element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node =
-                nodeList.item(0);
-        return node.getNodeValue();
+    private void displaySchemes(List<SchemeData> schemes) {
+        if (schemes.isEmpty()) {
+            lblXmlData.setText("No schemes available.");
+            return;
+        }
+
+        lblXmlData.setText("");
+        
+        for (SchemeData schemeData : schemes) {
+            String schemeName = schemeData.getScheme() != null ? schemeData.getScheme() : "";
+            String description = schemeData.getDescription() != null ? schemeData.getDescription() : "";
+            String notificationDate = schemeData.getNotificationDate() != null ? schemeData.getNotificationDate() : "";
+            
+            // Format the scheme display
+            String schemeHead = "<b><u>SCHEME :</u></b>";
+            String formattedScheme = "<b>" + schemeName + "</b>";
+            String descHead = "<b><u>DESCRIPTION :</u></b>";
+            String dateHead = "<b><u>NOTIFICATION DATE :</u></b>";
+            
+            lblXmlData.append(Html.fromHtml(schemeHead + formattedScheme + "<br>"));
+            lblXmlData.append(Html.fromHtml(descHead + " "));
+            lblXmlData.append(description + "\n");
+            
+            if (!notificationDate.isEmpty()) {
+                lblXmlData.append(Html.fromHtml(dateHead + " "));
+                lblXmlData.append(notificationDate + "\n");
+            }
+            
+            // Add clickable link if URL is valid
+            if (schemeData.hasValidUrl()) {
+                SpannableString linkText = new SpannableString("View Details");
+                linkText.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        openUrlInBrowser(schemeData.getUrl());
+                    }
+                }, 0, linkText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                lblXmlData.append(linkText);
+            }
+            
+            lblXmlData.append("\n\n");
+        }
+    }
+
+    private void openUrlInBrowser(String url) {
+        try {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(browserIntent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Unable to open URL", Toast.LENGTH_SHORT).show();
+        }
     }
 }
