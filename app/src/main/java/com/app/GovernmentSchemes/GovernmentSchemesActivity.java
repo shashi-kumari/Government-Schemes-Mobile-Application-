@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 public class GovernmentSchemesActivity extends BaseActivity {
     public static final String EXTRA_SECTOR = "sector";
     
@@ -102,13 +104,27 @@ public class GovernmentSchemesActivity extends BaseActivity {
     }
 
     private void handleStateClick(String stateName) {
-        String url = StateSchemeProvider.getStateUrl(sector, stateName);
-        if (url != null && !url.isEmpty()) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
-        } else {
-            Toast.makeText(this, "No " + sector.getDisplayName().toLowerCase() + " scheme URL available for " + stateName, Toast.LENGTH_SHORT).show();
-        }
+        // Fetch URL from Firebase Database asynchronously
+        StateSchemeProvider.getStateUrl(sector, stateName, new StateSchemeProvider.StateUrlCallback() {
+            @Override
+            public void onUrlLoaded(@Nullable String url) {
+                if (url != null && !url.isEmpty()) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                } else {
+                    Toast.makeText(GovernmentSchemesActivity.this, 
+                            "No " + sector.getDisplayName().toLowerCase() + " scheme URL available for " + stateName, 
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(GovernmentSchemesActivity.this, 
+                        "Error loading URL: " + errorMessage, 
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

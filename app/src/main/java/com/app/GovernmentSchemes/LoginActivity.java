@@ -17,7 +17,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,16 +59,64 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    // Sign in success, go to MainActivity
+                                    // Sign in success, fetch user details from DB then go to MainActivity
                                     Log.d(TAG, "signInWithEmail:success");
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    String uuid = mAuth.getCurrentUser().getUid();
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(uuid);
+                                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.exists()) {
+                                                // Fetch user data into HelperClass object using UUID
+                                                HelperClass userData = snapshot.getValue(HelperClass.class);
+                                                if (userData != null) {
+                                                    userData.setUuid(uuid);
+                                                    Log.d("LoginActivity", "User data fetched successfully for UUID: " + uuid);
+                                                    
+                                                    // Check if user has admin access
+                                                    boolean isAdmin = userData.getAdmnAccess();
+                                                    Log.d("LoginActivity", "User admin access: " + isAdmin);
+                                                    
+                                                    Intent intent;
+                                                    if (isAdmin) {
+                                                        // Redirect admin users to AdminDashboardActivity
+                                                        intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+                                                        Log.d("LoginActivity", "Admin user detected, redirecting to AdminDashboardActivity");
+                                                    } else {
+                                                        // Regular users go to MainActivity
+                                                        intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        Log.d("LoginActivity", "Regular user, redirecting to MainActivity");
+                                                    }
+                                                    
+                                                    intent.putExtra("name", userData.getName());
+                                                    intent.putExtra("email", userData.getEmail());
+                                                    intent.putExtra("username", userData.getUsername());
+                                                    intent.putExtra("uuid", uuid);
+                                                    intent.putExtra("isAdmin", isAdmin);
+                                                    intent.putExtra("isGuest", false);
+                                                    
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Log.w(TAG, "Failed to parse user data from snapshot");
+                                                    Toast.makeText(LoginActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            } else {
+                                                Log.w(TAG, "User not found in database after authentication");
+                                                Toast.makeText(LoginActivity.this, "Authenticated but user record missing.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.e("LoginActivity", "Database error: " + error.getMessage());
+                                            Toast.makeText(LoginActivity.this, "Database error.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
