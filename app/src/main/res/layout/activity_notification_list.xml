@@ -27,7 +27,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
-            app:srcCompat="@drawable/ic_hamburger_menu" />
+            app:srcCompat="@drawable/ic_back_theme" />
 
         <TextView
             android:id="@+id/header_title"
