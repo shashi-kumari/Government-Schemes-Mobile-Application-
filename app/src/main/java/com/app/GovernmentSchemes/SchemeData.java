@@ -93,9 +93,14 @@ public class SchemeData {
 
     /**
      * Checks if this scheme was created within the last 24 hours.
-     * @return true if created within last 24 hours
+     * Note: Schemes with createdAt = 0 (legacy schemes without timestamp) will return false
+     * since their actual creation time is unknown.
+     * @return true if created within last 24 hours, false for legacy schemes without timestamp
      */
     public boolean isRecentlyAdded() {
+        if (createdAt == 0) {
+            return false; // Legacy schemes without timestamp are not considered recently added
+        }
         long twentyFourHoursAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
         return createdAt > twentyFourHoursAgo;
     }

@@ -117,7 +117,10 @@ public class AdminRecentSchemesActivity extends AppCompatActivity {
                     for (DataSnapshot schemeSnapshot : categorySnapshot.getChildren()) {
                         try {
                             SchemeData schemeData = schemeSnapshot.getValue(SchemeData.class);
-                            if (schemeData != null && schemeData.getCreatedAt() > twentyFourHoursAgo) {
+                            // Only show schemes with valid createdAt timestamp that are within 24 hours
+                            // Legacy schemes without timestamp (createdAt = 0) are intentionally excluded
+                            if (schemeData != null && schemeData.getCreatedAt() > 0 
+                                    && schemeData.getCreatedAt() > twentyFourHoursAgo) {
                                 recentSchemeList.add(new RecentSchemeItem(
                                         schemeSnapshot.getKey(),
                                         categoryName,
