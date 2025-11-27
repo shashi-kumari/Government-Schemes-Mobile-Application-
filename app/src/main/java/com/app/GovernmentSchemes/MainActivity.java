@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView agriculture, bank, business, education, health, house, logout, subscribeButton, themeToggle;
+    ImageView agriculture, bank, business, education, health, house, logout, subscribeButton, themeToggle, adminDashboardIcon;
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "channel_id";
     private static final CharSequence CHANNEL_NAME = "My Channel";
@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CODE = 1;
     
     private boolean isGuestMode = false;
+    private boolean isAdmin = false;
     private ThemeManager themeManager;
 
     @Override
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Check if user is in guest mode
         isGuestMode = getIntent().getBooleanExtra("isGuest", false);
+        
+        // Check if user is admin
+        isAdmin = getIntent().getBooleanExtra("isAdmin", false);
 
         agriculture = findViewById(R.id.agro);
         bank = findViewById(R.id.bank);
@@ -51,6 +55,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         house = findViewById(R.id.house);
         logout = findViewById(R.id.logoutimage);
         themeToggle = findViewById(R.id.theme_toggle);
+        adminDashboardIcon = findViewById(R.id.admin_dashboard_icon);
+        
+        // Show admin icon only for admin users
+        if (isAdmin) {
+            adminDashboardIcon.setVisibility(View.VISIBLE);
+            adminDashboardIcon.setOnClickListener(this);
+        }
         
         logout.setOnClickListener(this);
         themeToggle.setOnClickListener(this);
@@ -161,6 +172,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent logout = new Intent(MainActivity.this, LogoutActivity.class);
                 startActivity(logout);
             }
+        }
+        
+        if (view.equals(adminDashboardIcon)) {
+            // Navigate to Admin Dashboard
+            Intent adminDashboard = new Intent(MainActivity.this, AdminDashboardActivity.class);
+            adminDashboard.putExtra("name", getIntent().getStringExtra("name"));
+            adminDashboard.putExtra("email", getIntent().getStringExtra("email"));
+            adminDashboard.putExtra("uuid", getIntent().getStringExtra("uuid"));
+            startActivity(adminDashboard);
         }
         
         if (view.equals(themeToggle)) {

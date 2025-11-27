@@ -67,19 +67,40 @@ public class LoginActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             if (snapshot.exists()) {
-                                                String nameFromDB = null, emailFromDB = null, usernameFromDB = null;
-                                                nameFromDB = snapshot.child("name").getValue(String.class);
-                                                emailFromDB = snapshot.child("email").getValue(String.class);
-                                                usernameFromDB = snapshot.child("username").getValue(String.class);
-
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                                intent.putExtra("name", nameFromDB);
-                                                intent.putExtra("email", emailFromDB);
-                                                intent.putExtra("username", usernameFromDB);
-                                                intent.putExtra("isGuest", false);
-                                                Log.d("LoginActivity", "Login successful, starting MainActivity with DB data");
-                                    startActivity(intent);
-                                    finish();
+                                                // Fetch user data into HelperClass object using UUID
+                                                HelperClass userData = snapshot.getValue(HelperClass.class);
+                                                if (userData != null) {
+                                                    userData.setUuid(uuid);
+                                                    Log.d("LoginActivity", "User data fetched successfully for UUID: " + uuid);
+                                                    
+                                                    // Check if user has admin access
+                                                    boolean isAdmin = userData.getAdmnAccess();
+                                                    Log.d("LoginActivity", "User admin access: " + isAdmin);
+                                                    
+                                                    Intent intent;
+                                                    if (isAdmin) {
+                                                        // Redirect admin users to AdminDashboardActivity
+                                                        intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+                                                        Log.d("LoginActivity", "Admin user detected, redirecting to AdminDashboardActivity");
+                                                    } else {
+                                                        // Regular users go to MainActivity
+                                                        intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        Log.d("LoginActivity", "Regular user, redirecting to MainActivity");
+                                                    }
+                                                    
+                                                    intent.putExtra("name", userData.getName());
+                                                    intent.putExtra("email", userData.getEmail());
+                                                    intent.putExtra("username", userData.getUsername());
+                                                    intent.putExtra("uuid", uuid);
+                                                    intent.putExtra("isAdmin", isAdmin);
+                                                    intent.putExtra("isGuest", false);
+                                                    
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Log.w(TAG, "Failed to parse user data from snapshot");
+                                                    Toast.makeText(LoginActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+                                                }
                                             } else {
                                                 Log.w(TAG, "User not found in database after authentication");
                                                 Toast.makeText(LoginActivity.this, "Authenticated but user record missing.", Toast.LENGTH_SHORT).show();
