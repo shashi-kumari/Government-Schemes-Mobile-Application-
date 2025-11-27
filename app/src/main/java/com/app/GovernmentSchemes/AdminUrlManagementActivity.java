@@ -134,6 +134,7 @@ public class AdminUrlManagementActivity extends AppCompatActivity {
 
     /**
      * Loads state URLs for the selected category from Firebase
+     * Falls back to default URLs from StateScheme enum when no custom URL is set
      */
     private void loadStateUrls() {
         if (selectedCategory == null) {
@@ -158,10 +159,15 @@ public class AdminUrlManagementActivity extends AppCompatActivity {
                     String url = "";
                     DataSnapshot stateSnapshot = snapshot.child(stateCode);
                     if (stateSnapshot.exists()) {
-                        String firebaseUrl = stateSnapshot.child("urls").getValue(String.class);
-                        if (firebaseUrl != null) {
+                        String firebaseUrl = stateSnapshot.child("url").getValue(String.class);
+                        if (firebaseUrl != null && !firebaseUrl.isEmpty()) {
                             url = firebaseUrl;
                         }
+                    }
+                    
+                    // If no Firebase URL, use default URL from StateScheme enum
+                    if (url.isEmpty()) {
+                        url = state.getUrl();
                     }
 
                     stateUrlList.add(new StateUrlItem(stateCode, stateName, url));
