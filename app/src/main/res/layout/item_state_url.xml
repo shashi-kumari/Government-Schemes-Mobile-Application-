@@ -31,8 +31,10 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
                 android:background="@color/purple_500"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"/>
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
 
             <TextView
                 android:id="@+id/state_name_text"

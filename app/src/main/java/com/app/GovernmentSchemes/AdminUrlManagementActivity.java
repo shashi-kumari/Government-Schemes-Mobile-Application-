@@ -208,11 +208,19 @@ public class AdminUrlManagementActivity extends AppCompatActivity {
             return "XX";
         }
         
-        String[] words = stateName.split(" ");
-        if (words.length >= 2) {
+        // Trim and normalize the state name, handle consecutive spaces
+        String normalizedName = stateName.trim().replaceAll("\\s+", " ");
+        if (normalizedName.isEmpty()) {
+            return "XX";
+        }
+        
+        String[] words = normalizedName.split(" ");
+        if (words.length >= 2 && !words[0].isEmpty() && !words[1].isEmpty()) {
             return (words[0].substring(0, 1) + words[1].substring(0, 1)).toUpperCase();
+        } else if (!words[0].isEmpty()) {
+            return words[0].substring(0, Math.min(2, words[0].length())).toUpperCase();
         } else {
-            return stateName.substring(0, Math.min(2, stateName.length())).toUpperCase();
+            return "XX";
         }
     }
 
@@ -368,12 +376,12 @@ public class AdminUrlManagementActivity extends AppCompatActivity {
             }
 
             /**
-             * Validates URL format
+             * Validates URL format using Android's Patterns.WEB_URL
              * @param url URL to validate
              * @return true if valid, false otherwise
              */
             private boolean isValidUrl(String url) {
-                return url.startsWith("http://") || url.startsWith("https://");
+                return android.util.Patterns.WEB_URL.matcher(url).matches();
             }
         }
     }
