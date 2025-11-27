@@ -1,5 +1,7 @@
 package com.app.GovernmentSchemes;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,7 +65,7 @@ public class AdminUrlManagementActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_url_management);
 
         // Initialize Firebase reference
-        urlsReference = FirebaseDatabase.getInstance().getReference("scheme_urls");
+        urlsReference = FirebaseDatabase.getInstance().getReference("urls");
 
         // Initialize views
         backButton = findViewById(R.id.back_button);
@@ -155,17 +158,9 @@ public class AdminUrlManagementActivity extends AppCompatActivity {
                     String url = "";
                     DataSnapshot stateSnapshot = snapshot.child(stateCode);
                     if (stateSnapshot.exists()) {
-                        String firebaseUrl = stateSnapshot.child("url").getValue(String.class);
+                        String firebaseUrl = stateSnapshot.child("urls").getValue(String.class);
                         if (firebaseUrl != null) {
                             url = firebaseUrl;
-                        }
-                    }
-                    
-                    // If no Firebase URL, use default from StateSchemeProvider
-                    if (url.isEmpty()) {
-                        String defaultUrl = StateSchemeProvider.getStateUrl(selectedCategory, stateName);
-                        if (defaultUrl != null) {
-                            url = defaultUrl;
                         }
                     }
 
@@ -269,21 +264,6 @@ public class AdminUrlManagementActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Data class for storing state URL data in Firebase
-     * Matches the JSON structure:
-     * {
-     *     "category": {
-     *         "states": [
-     *             {
-     *                 "code": "CA",
-     *                 "name": "California",
-     *                 "url": "https://example.com/ca"
-     *             }
-     *         ]
-     *     }
-     * }
-     */
     public static class StateUrlData {
         public String code;
         public String name;

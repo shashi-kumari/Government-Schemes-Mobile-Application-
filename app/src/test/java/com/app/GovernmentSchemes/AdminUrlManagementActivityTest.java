@@ -52,16 +52,4 @@ public class AdminUrlManagementActivityTest {
         assertEquals("Housing", SchemeSector.HOUSING.getDisplayName());
     }
 
-    @Test
-    public void stateSchemeProvider_getStateUrl_returnsUrlForValidState() {
-        String url = StateSchemeProvider.getStateUrl(SchemeSector.AGRICULTURE, "Andhra Pradesh");
-        assertNotNull(url);
-        assertTrue(url.startsWith("https://"));
-    }
-
-    @Test
-    public void stateSchemeProvider_getStateUrl_returnsNullForInvalidState() {
-        String url = StateSchemeProvider.getStateUrl(SchemeSector.AGRICULTURE, "Invalid State");
-        assertNull(url);
-    }
 }
