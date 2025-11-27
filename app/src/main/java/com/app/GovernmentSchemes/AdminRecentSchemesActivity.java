@@ -26,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -132,6 +134,14 @@ public class AdminRecentSchemesActivity extends AppCompatActivity {
                         }
                     }
                 }
+
+                // Sort by createdAt descending (latest first)
+                Collections.sort(recentSchemeList, new Comparator<RecentSchemeItem>() {
+                    @Override
+                    public int compare(RecentSchemeItem item1, RecentSchemeItem item2) {
+                        return Long.compare(item2.schemeData.getCreatedAt(), item1.schemeData.getCreatedAt());
+                    }
+                });
 
                 updateUI();
             }
