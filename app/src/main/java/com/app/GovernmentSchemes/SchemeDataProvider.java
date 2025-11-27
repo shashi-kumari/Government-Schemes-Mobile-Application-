@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SchemeDataProvider {
     private static final String TAG = "SchemeDataProvider";
-    private static final String DATABASE_PATH = "schemes";
+    private static final String DATABASE_PATH = "Scheme";
     
     // Thread-safe cache for storing fetched schemes to avoid repeated database calls
     private static final Map<String, List<SchemeData>> schemeCache = new ConcurrentHashMap<>();
@@ -42,7 +42,7 @@ public class SchemeDataProvider {
      * @param callback Callback to receive the list of schemes or error
      */
     public static void getSchemesForSector(SchemeSector sector, SchemeListCallback callback) {
-        String sectorName = sector.name().toLowerCase();
+        String sectorName = sector.getDisplayName();
         
         // Check cache first
         if (schemeCache.containsKey(sectorName)) {
@@ -57,11 +57,11 @@ public class SchemeDataProvider {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference(DATABASE_PATH)
                 .child(sectorName);
-        
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<SchemeData> schemes = new ArrayList<>();
+                Log.w(TAG, "Deserializing scheme data for key: " + snapshot.getKey()+" size: "+snapshot.getChildrenCount());
                 
                 for (DataSnapshot schemeSnapshot : snapshot.getChildren()) {
                     try {

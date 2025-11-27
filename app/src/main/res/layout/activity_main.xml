@@ -240,13 +240,13 @@
     <ImageView
         android:id="@+id/logoutimage"
         android:layout_width="55dp"
-        android:layout_height="50dp"
+        android:layout_height="43dp"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.295"
+        app:layout_constraintVertical_bias="0.379"
         app:srcCompat="@drawable/ic_logout_theme" />
 
     <ImageView
@@ -280,7 +280,6 @@
         android:layout_marginTop="52dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="8dp"
-        android:visibility="gone"
         android:contentDescription="Admin Dashboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.35"
